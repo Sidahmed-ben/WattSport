@@ -1,26 +1,27 @@
 
-const { pool } = require("../dbConfig");
+const { pool } = require("../db/dbConfig");
 const bcrypt = require("bcrypt");
 var express = require('express');
 const  router = express.Router();
-
+const utils = require("./utils");
 
 
 module.exports.initUserRoutes = (passport) => {
-    router.get("/users/register", checkAuthenticated, (req, res) => {
+    router.get("/users/register", utils.checkAuthenticated, (req, res) => {
         res.render("register.ejs");
       });
       
-      router.get("/users/login", checkAuthenticated, (req, res) => {
+      router.get("/users/login", utils.checkAuthenticated, (req, res) => {
         // flash sets a messages variable. passport sets the error message
         // console.log(req.session.flash.error);
         res.render("login.ejs");
       });
       
-      router.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
+      router.get("/users/dashboard", utils.checkNotAuthenticated, (req, res) => {
         console.log(req.isAuthenticated());
         res.render("dashboard", { user: req.user.name });
       });
+      
       
       router.get('/users/logout', function(req, res) {
         req.logout(function(err) {
@@ -35,11 +36,7 @@ module.exports.initUserRoutes = (passport) => {
       
       router.post('/users/register' , async (req,res) => {
         let { name, email, password, password2} = req.body;
-        // let name = "sidou";
-        // let email = "email@gmail.com";
-        // let password = "password";
-        // let password2 = "password";
-      
+
         console.log(
             {
                 name,
@@ -116,21 +113,6 @@ module.exports.initUserRoutes = (passport) => {
     );
     
     
-    
-    function checkAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) {
-          return res.redirect("/users/dashboard");
-        }
-        next();
-      }
-      
-      function checkNotAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) {
-          return next();
-        }
-        res.redirect("/users/login");
-    }
-
 }
 
 
