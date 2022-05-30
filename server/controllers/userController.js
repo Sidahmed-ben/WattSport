@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 
 createUser = async (req,res) =>{
     let { name, email, password, password2} = req.body;
+    console.log(req.body);
 
     console.log(
         {
@@ -73,4 +74,41 @@ createUser = async (req,res) =>{
 
 
 
+authenticateUser = (email, password, done) => {
+    console.log(email, password);
+    pool.query(
+      `SELECT * FROM users WHERE email = $1`,
+      [email],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+        console.log(results.rows);
+
+        if (results.rows.length > 0) {
+          const user = results.rows[0];
+
+          bcrypt.compare(password, user.password, (err, isMatch) => {
+            if (err) {
+              console.log(err);
+            }
+            if (isMatch) {
+              return done(null, user);
+            } else {
+              //password is incorrect
+              return done(null, false, { message: "Password is incorrect" });
+            }
+          });
+        } else {
+          // No user
+          return done(null, false, {
+            message: "No user with that email address"
+          });
+        }
+      }
+    );
+};
+
+
 module.exports.createUser = createUser;
+module.exports.authenticateUser = authenticateUser;
