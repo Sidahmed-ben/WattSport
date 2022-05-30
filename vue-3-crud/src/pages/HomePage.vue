@@ -10,8 +10,10 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-10 col-xl-7 mx-auto">
-                                <h3 class="display-4">Split page!</h3>
-                                <p class="text-muted mb-4">Create a login split page using Bootstrap 4.</p>
+                                <h3 class="display-4">Watt Sport</h3>
+                                <div class="login-text">
+                                    <p class=" mb-4">Login</p>
+                                </div>
                                 <form>
                                     <div class="form-group mb-3">
                                         <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4">
@@ -19,10 +21,10 @@
                                     <div class="form-group mb-3">
                                         <input id="inputPassword" type="password" placeholder="Password" required="" class="form-control rounded-pill border-0 shadow-sm px-4 text-primary">
                                     </div>
-                                    <div class="custom-control custom-checkbox mb-3">
+                                    <!-- <div class="custom-control custom-checkbox mb-3">
                                         <input id="customCheck1" type="checkbox" checked class="custom-control-input">
                                         <label for="customCheck1" class="custom-control-label">Remember password</label>
-                                    </div>
+                                    </div> -->
                                     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
                                     
                                 </form>
@@ -65,4 +67,31 @@
     div.row{
         text-align: center;
     }
+
+    h3 {
+        font-weight: bolder;
+        margin-bottom: 20px;
+    }
+
+    div .login-text{
+        background-color: black;
+        width: 100px;
+        height: 40px;
+        margin: 20px auto;
+        text-align: center;
+        color: azure;
+        padding-top: 8px;
+        border-radius: 20px;
+        margin-bottom: 80px;
+    }
+
+    button{
+        width: 200px;
+        margin-top: 10px;
+    }
+
+    input {
+        margin: 30px auto;
+    }
+
 </style>
