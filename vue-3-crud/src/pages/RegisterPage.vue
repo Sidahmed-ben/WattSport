@@ -20,31 +20,33 @@
                                         <input id="name" type="text" placeholder="Name" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.name">
                                     </div>
                                     <!-- Handle Name error -->
-                                    <div class="input-errors" v-for="(error, index) of v$.form.name.$errors" :key="index">
-                                        <div class="error-msg">{{ error.$message }}</div>
+                                    <div class="input-errors" v-if="v$.form.name.$errors.length > 0" :key="index">
+                                        <div class="error-msg">{{ v$.form.name.$errors[0].$message }}</div>
                                     </div>
                                     <!-- Email  -->
                                     <div class="form-group mb-3">
-                                        <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.email">
+                                        <input id="inputEmail"  placeholder="Email address" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.email">
                                     </div>
                                     <!-- Email Validation  -->
-                                    <div class="input-errors" v-for="(error, index) of v$.form.email.$errors" :key="index">
-                                        <div class="error-msg">{{ error.$message }}</div>
+                                    <div class="input-errors" v-if="v$.form.email.$errors.length > 0" :key="index">
+                                        <div class="error-msg">{{ v$.form.email.$errors[0].$message }}</div>
                                     </div>
                                     <!-- Password  -->
                                     <div class="form-group mb-3">
                                         <input id="inputPassword" type="password" placeholder="Password" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.password">
                                     </div>
                                     <!-- Password Validation  -->
-                                    <div class="input-errors" v-for="(error, index) of v$.form.password.$errors" :key="index">
-                                        <div class="error-msg">{{ error.$message }}</div>
+                                    <div class="input-errors" v-if="v$.form.password.$errors.length > 0" :key="index">
+                                        <div class="error-msg">{{ v$.form.password.$errors[0].$message }}</div>
                                     </div>
                                     <!-- Password2 -->
                                     <div class="form-group mb-3">
                                         <input id="inputPassword2" type="password" placeholder="Confirm password" required="" class="form-control rounded-pill border-0 shadow-sm px-4 text-primary" v-model="form.password2">
                                     </div>
+                                    <div class="input-errors" v-if="v$.form.password2.$errors.length > 0" :key="index">
+                                        <div class="error-msg">{{ v$.form.password2.$errors[0].$message }}</div>
+                                    </div>
                                     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Register</button>
-        
                                 </form>
                             </div>
                         </div>
@@ -58,7 +60,7 @@
 
 <script>
     import useVuelidate from '@vuelidate/core'
-    import { required, email, minLength /*,sameAs*/ } from '@vuelidate/validators'
+    import { required, email, minLength ,sameAs } from '@vuelidate/validators'
     
     export function
         validName(name) {
@@ -93,13 +95,16 @@
                         } 
                     },
                     email: {
-                        required, email 
+                        required, 
+                        email 
                     },
                     password: { 
-                        required, min: minLength(6) 
+                        required,
+                        min: minLength(6) 
                     },
                     password2: { 
-                        required 
+                        required , 
+                        sameAs: sameAs(this.form.password),
                     }
                 }
             }
@@ -107,7 +112,12 @@
         methods:{
             onSubmit(){
                 this.v$.$validate();
-                console.log("Submitted");
+                if(this.v$.$error){
+                    alert("Failed to submit")
+                }else{
+                    alert("Submited Successfuly")
+                }
+                
             }
 
         }
@@ -150,11 +160,15 @@
 
     button{
         width: 200px;
-        margin-top: 10px;
+        margin-top: 30px;
     }
 
     input {
-        margin: 30px auto;
+        margin: 30px 0px auto;
+    }
+
+    div.input-errors {
+        color: red;
     }
 
 </style>

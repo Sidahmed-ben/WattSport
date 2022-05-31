@@ -14,12 +14,22 @@
                                 <div class="login-text">
                                     <p class=" mb-4">Login</p>
                                 </div>
-                                <form>
+                                <form @submit.prevent="onSubmit">
+                                    <!-- Email -->
                                     <div class="form-group mb-3">
-                                        <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4">
+                                        <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.email">
                                     </div>
+                                    <!-- Handle Email error -->
+                                    <div class="input-errors" v-if="v$.form.email.$errors.length > 0" :key="index">
+                                        <div class="error-msg">{{ v$.form.email.$errors[0].$message }}</div>
+                                    </div>
+                                    <!--  Password  -->
                                     <div class="form-group mb-3">
-                                        <input id="inputPassword" type="password" placeholder="Password" required="" class="form-control rounded-pill border-0 shadow-sm px-4 text-primary">
+                                        <input id="inputPassword" type="password" placeholder="Password" required="" class="form-control rounded-pill border-0 shadow-sm px-4 text-primary" v-model="form.password">
+                                    </div>
+                                    <!-- Handle Password Input -->
+                                    <div class="input-errors" v-if="v$.form.password.$errors.length > 0" :key="index">
+                                        <div class="error-msg">{{ v$.form.password.$errors[0].$message }}</div>
                                     </div>
                                     <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
                                     <div>
@@ -38,15 +48,47 @@
 
 <script>
     // Import something
+   import useVuelidate from '@vuelidate/core'
+    import { required, email, minLength } from '@vuelidate/validators'
+    
+    // Import something
     export default{
         name: 'HomePage',
         components: {},
-
         data(){
             return{
-
+                v$: useVuelidate(),
+                form: {
+                    name: '',
+                    email: ''
+                }
+            }
+        },
+        validations() {
+            return {
+                form: {
+                    email: {
+                        required, 
+                        email 
+                    },
+                    password: { 
+                        required,
+                        min: minLength(6) 
+                    }
+                }
+            }
+        },
+        methods:{
+            onSubmit(){
+                this.v$.$validate();
+                if(this.v$.$error){
+                    alert("Failed to Sign in")
+                }else{
+                    alert("Singned Successfuly")
+                }
             }
         }
+
     }
 
 </script>
@@ -85,11 +127,15 @@
 
     button{
         width: 200px;
-        margin-top: 10px;
+        margin-top: 30px;
     }
 
     input {
-        margin: 30px auto;
+        margin: 30px 0px auto;
+    }
+
+    div.input-errors {
+        color: red;
     }
 
 </style>
