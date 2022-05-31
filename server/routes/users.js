@@ -6,13 +6,13 @@ let createUser = require('../controllers/userController').createUser;
 
 
 module.exports.initUserRoutes = (passport) => {
-    router.get("/users/register", utils.checkAuthenticated, (req, res) => {
+      router.get("/users/register", utils.checkAuthenticated, (req, res) => {
         res.render("register.ejs");
       });
       
       router.get("/users/login", utils.checkAuthenticated, (req, res) => {
         // flash sets a messages variable. passport sets the error message
-        // console.log(req.session.flash.error);
+        console.log(" I'm in login");
         res.render("login.ejs");
       });
       

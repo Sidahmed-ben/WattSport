@@ -84,7 +84,8 @@
                 if(this.v$.$error){
                     alert("Failed to Sign in")
                 }else{
-                    alert("Singned Successfuly")
+                    alert("Singned Successfuly");
+                
                 }
             }
         }

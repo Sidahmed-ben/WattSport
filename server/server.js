@@ -5,17 +5,29 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 require("dotenv").config();
 const app = express();
-const PORT = 8080;
+const cors = require('cors');
+const PORT = 8081;
+
+// Corse configuration.
+var corsOptions = {
+  // Client adresse
+  origin: "http://localhost:8080"
+};
+app.use(cors(corsOptions));
 
 
-// iMPORT INITIALIZEpASSPORT FUNCTION
+// IMPORT INITIALIZE PASSPORT FUNCTION
 const initializePassport = require("./passport/passportConfig");
 initializePassport(passport);
 
+// Parses details from a formcorsOptions
+// app.use(express.json());
 
-// Parses details from a form
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 
 
@@ -47,7 +59,7 @@ app.use(flash());
 app.get("/", (req, res) => {
   res.render("index");
 });
-
+  
 
 // Import users routes
 require('./routes/users').initUserRoutes(passport);

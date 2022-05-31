@@ -12,9 +12,12 @@
                             <div class="col-lg-10 col-xl-7 mx-auto">
                                 <h3 class="display-4">Watt Sport</h3>
                                 <div class="login-text">
-                                    <p class=" mb-4">Register</p>
+                                    <p class="mb-4">Register</p>
                                 </div>
                                 <form  @submit.prevent="onSubmit">
+                                    <div v-if="servErrors.length > 0">
+                                        <p class="mb-4" style="color: red;"> {{ servErrors[0].error.message }} </p>
+                                    </div>
                                     <!-- Name -->
                                     <div class="form-group mb-3">
                                         <input id="name" type="text" placeholder="Name" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.name">
@@ -61,7 +64,9 @@
 <script>
     import useVuelidate from '@vuelidate/core'
     import { required, email, minLength ,sameAs } from '@vuelidate/validators'
-    
+    import UsersDataService from '@/services/UsersDataService';
+
+
     export function
         validName(name) {
                 let validNamePattern = new RegExp("^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
@@ -76,6 +81,7 @@
         components: {},
         data(){
             return{
+                servErrors : [],
                 v$: useVuelidate(),
                 form: {
                     name: '',
@@ -113,13 +119,48 @@
             onSubmit(){
                 this.v$.$validate();
                 if(this.v$.$error){
-                    alert("Failed to submit")
+                    return
                 }else{
-                    alert("Submited Successfuly")
+                    this.registerUser();
                 }
                 
-            }
+            },
+            registerUser() {
+                let data = {
+                    name: this.form.name,
+                    email: this.form.email,
+                    password: this.form.password,
+                    password2: this.form.password2,
+                };
 
+                UsersDataService.registerUser(data)
+                    .then(() => {
+                      console.log(" Users registered succeffuly");
+                      this.$router.push('/');
+                    })
+                    .catch(e => {
+                        // console.log(e.response.status);
+                        // console.log(e.response.data);
+                        this.servErrors = [];
+                        switch (e.response.status){
+                            case 400:
+                                console.log(e.response.data);
+                                this.servErrors.push({error : e.response.data});
+                            break;
+
+                            case 500:
+                                console.log(e.response.data);
+                                this.servErrors.push({error : e.response.data});
+                            break;
+
+                            case 409:
+                                console.log(e.response.data);
+                                this.servErrors.push({error : e.response.data});
+                            break;
+
+                        }
+                    });
+            }
         }
 
     }

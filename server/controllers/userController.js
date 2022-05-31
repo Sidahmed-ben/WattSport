@@ -2,7 +2,7 @@ const { pool } = require("../db/dbConfig");
 const bcrypt = require("bcrypt");
 
 
-
+// Called whaen Post Register User is triggered
 createUser = async (req,res) =>{
     let { name, email, password, password2} = req.body;
     console.log(req.body);
@@ -16,21 +16,17 @@ createUser = async (req,res) =>{
         }
     );
   
-    let errors = [];
+
     if(!name || !email || !password || !password2){
-        errors.push({message: "Please enter all fields" });
+      res.status(400).send({message : `INPUT ERROR : EMPTY INPUT NAME OR EMAIL OR PASSWORD OR PASSWORD2`})
     }
-  
+    
     if(password.length < 6 ){
-        errors.push({message: "Password should be at least 6 caracters "});
+      res.status(400).send({message : `INPUT ERROR : PASSWORD LENGTH IS LESS THEN 6 CHAR`})
     }
    
     if(password != password2){
-        errors.push({message: "Passwords not identique"});
-    }
-  
-    if(errors.length != 0){
-        res.render("register", {errors});
+      res.status(400).send({message : `INPUT ERROR : PASSWORD IS DIFFERENT OF CONFIRM PASSWORD `})
     }
   
     //  THE FORM IS VALIDE 
@@ -44,27 +40,34 @@ createUser = async (req,res) =>{
         [email] , 
         (err,result) => {
             if(err){
-                console.log(" ERROR IN SELECTING USER WITH EMAIL ",email);
-                throw err
+                // Error when sending db request
+                res.status(500).send({message : `ERROR IN SELECTING USER WITH EMAIL ${email}`})
+                // console.log();
+                // throw err
             }
             const match_email_list = result.rows
             if(match_email_list.length != 0){
-                errors.push({message: `Email ${email} exists`});
-                res.render("register" , {errors});
+                // errors.push();
+                res.status(409).send({message: `Email ${email} already exists`});
+                // res.render("register" , {errors});
             }else{
                 pool.query(
                     `INSERT INTO users (name, email, password)
                     VALUES ($1, $2, $3)`,[name,email,hashedPassword],
                     (err,result) => {
                         if(err)  {
-                            errors.push({message: ` ERROR IN INSERTING USER ${name}`});
-                            console.log(` ERROR IN INSERTING USER ${name}`);
-                            res.render("register", {errors});
-                            throw err
+                            res.status(500).send({message: ` ERROR IN INSERTING USER ${name}`});
+                            // errors.push({message: ` ERROR IN INSERTING USER ${name}`});
+
+                            // console.log(` ERROR IN INSERTING USER ${name}`);
+                            // res.render("register", {errors});
+                            // throw err
                         }
                         // console.log(result.rows);
-                        req.flash(" success_message ", "You are now registered please log in");
-                        res.redirect("/users/login");    
+                        // req.flash(" success_message ", "You are now registered please log in");
+                        // res.redirect("/users/login");    
+
+                        res.status(200).send({message: ` ${name} Registered successfully`});
                     }
                 )
             }
@@ -73,7 +76,7 @@ createUser = async (req,res) =>{
 }
 
 
-
+// Called by passport when login Post is triggered
 authenticateUser = (email, password, done) => {
     console.log(email, password);
     pool.query(
