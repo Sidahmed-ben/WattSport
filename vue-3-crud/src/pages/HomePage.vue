@@ -15,6 +15,9 @@
                                     <p class=" mb-4">Login</p>
                                 </div>
                                 <form @submit.prevent="onSubmit">
+                                    <div v-if="servErrors.length > 0">
+                                        <p class="mb-4" style="color: red;"> {{ servErrors[0].error.message }} </p>
+                                    </div>
                                     <!-- Email -->
                                     <div class="form-group mb-3">
                                         <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.email">
@@ -48,8 +51,9 @@
 
 <script>
     // Import something
-   import useVuelidate from '@vuelidate/core'
+    import useVuelidate from '@vuelidate/core'
     import { required, email, minLength } from '@vuelidate/validators'
+    import UsersDataService from '@/services/UsersDataService';
     
     // Import something
     export default{
@@ -57,6 +61,7 @@
         components: {},
         data(){
             return{
+                servErrors: [],
                 v$: useVuelidate(),
                 form: {
                     name: '',
@@ -82,13 +87,36 @@
             onSubmit(){
                 this.v$.$validate();
                 if(this.v$.$error){
-                    alert("Failed to Sign in")
+                    return
                 }else{
-                    alert("Singned Successfuly");
-                
+                    this.loginUser()
                 }
-            }
+            },
+
+            loginUser() {
+                let data = {
+                    email: this.form.email,
+                    password: this.form.password,
+                };
+                this.servErrors = [];
+                UsersDataService.loginUser(data)
+                    .then((result) => {
+                      console.log(" Users loged succeffuly");
+                      console.log(result);
+                      this.$router.push('/user');
+                    })
+                    .catch(e => {
+                        this.servErrors = [];
+                        switch (e.response.status){
+                            case 401:
+                                console.log(e.response.data);
+                                this.servErrors.push({error : e.response.data});
+                            break;
+                        }
+                    });
+                }
         }
+
 
     }
 

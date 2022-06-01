@@ -133,32 +133,20 @@
                     password2: this.form.password2,
                 };
 
+                this.servErrors = [];
                 UsersDataService.registerUser(data)
                     .then(() => {
                       console.log(" Users registered succeffuly");
-                      this.$router.push('/');
+                      this.$router.push('/UserHomePage');
                     })
                     .catch(e => {
-                        // console.log(e.response.status);
-                        // console.log(e.response.data);
-                        this.servErrors = [];
-                        switch (e.response.status){
-                            case 400:
-                                console.log(e.response.data);
-                                this.servErrors.push({error : e.response.data});
-                            break;
-
-                            case 500:
-                                console.log(e.response.data);
-                                this.servErrors.push({error : e.response.data});
-                            break;
-
-                            case 409:
-                                console.log(e.response.data);
-                                this.servErrors.push({error : e.response.data});
-                            break;
-
+                        if(e.response.status === 400 || e.response.status === 500 || e.response.status === 409 ){
+                            console.log(e.response.data);
+                            this.servErrors.push({error : e.response.data});
+                        }else{
+                            console.log(" ERROR CAN NOT BE IDENTIFIED ?? ");
                         }
+                    
                     });
             }
         }

@@ -42,14 +42,10 @@ createUser = async (req,res) =>{
             if(err){
                 // Error when sending db request
                 res.status(500).send({message : `ERROR IN SELECTING USER WITH EMAIL ${email}`})
-                // console.log();
-                // throw err
             }
             const match_email_list = result.rows
             if(match_email_list.length != 0){
-                // errors.push();
                 res.status(409).send({message: `Email ${email} already exists`});
-                // res.render("register" , {errors});
             }else{
                 pool.query(
                     `INSERT INTO users (name, email, password)
@@ -57,16 +53,7 @@ createUser = async (req,res) =>{
                     (err,result) => {
                         if(err)  {
                             res.status(500).send({message: ` ERROR IN INSERTING USER ${name}`});
-                            // errors.push({message: ` ERROR IN INSERTING USER ${name}`});
-
-                            // console.log(` ERROR IN INSERTING USER ${name}`);
-                            // res.render("register", {errors});
-                            // throw err
-                        }
-                        // console.log(result.rows);
-                        // req.flash(" success_message ", "You are now registered please log in");
-                        // res.redirect("/users/login");    
-
+                        }   
                         res.status(200).send({message: ` ${name} Registered successfully`});
                     }
                 )
@@ -87,29 +74,31 @@ authenticateUser = (email, password, done) => {
           throw err;
         }
         console.log(results.rows);
-
         if (results.rows.length > 0) {
           const user = results.rows[0];
-
           bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) {
               console.log(err);
             }
             if (isMatch) {
+              console.log(" User found ");
               return done(null, user);
             } else {
               //password is incorrect
+              console.log(" Uncorrect password ");
               return done(null, false, { message: "Password is incorrect" });
             }
           });
         } else {
           // No user
+          console.log(" No user found ");
           return done(null, false, {
             message: "No user with that email address"
           });
         }
       }
     );
+
 };
 
 

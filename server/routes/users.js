@@ -37,11 +37,22 @@ module.exports.initUserRoutes = (passport) => {
       
       router.post(
         "/users/login",
-        passport.authenticate("local", {
-          successRedirect: "/users/dashboard",
-          failureRedirect: "/users/login",
-          failureFlash: true
-        })
+        // FIND SOLUTION HERE FOR RETURNING STATUS ERROR
+        (req, res, next) => {
+          passport.authenticate('local', function(err, user, info) {
+              if (err) { return next(err); } //error exception
+              // user will be set to false, if not authenticated
+              if (!user) {
+                  res.status(401).send({message: "User not found ! Verify your adress or your password"}); //info contains the error message
+              } else {
+                  // if user authenticated maintain the session
+                  req.logIn(user, function() {
+                      // do whatever here on successful login
+                      res.status(200).send(user);
+                  })
+              }    
+          })(req, res, next);
+      }
     );
     
     
