@@ -11,7 +11,8 @@ const PORT = 8081;
 // Corse configuration.
 var corsOptions = {
   // Client adresse
-  origin: "http://localhost:8080"
+  origin: "http://localhost:8080",
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
@@ -22,6 +23,7 @@ initializePassport(passport);
 
 // Parses details from a formcorsOptions
 // app.use(express.json());
+
 
 app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
@@ -38,12 +40,11 @@ app.use(
     // Should we resave our session variables if nothing has changes which we dont
     resave: false,
     // Add cookie with maxAge to store the current session.
-    cookie: {maxAge: 10000000},
+    cookie: {maxAge: 86000000000000}, // 24H
     // Save empty value if there is no vaue which we do not want to do
     saveUninitialized: false
   })
 );
-
 
 
 //  INITIALIZE PASSPORT FOR AUTHENTICATION

@@ -137,7 +137,7 @@
                 UsersDataService.registerUser(data)
                     .then(() => {
                       console.log(" Users registered succeffuly");
-                      this.$router.push('/UserHomePage');
+                      this.$router.push('/login');
                     })
                     .catch(e => {
                         if(e.response.status === 400 || e.response.status === 500 || e.response.status === 409 ){

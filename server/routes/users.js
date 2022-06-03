@@ -5,33 +5,18 @@ const utils = require("./utils");
 let createUser = require('../controllers/userController').createUser;
 
 
-module.exports.initUserRoutes = (passport) => {
-      router.get("/users/register", utils.checkAuthenticated, (req, res) => {
-        res.render("register.ejs");
-      });
-      
-      router.get("/users/login", utils.checkAuthenticated, (req, res) => {
-        // flash sets a messages variable. passport sets the error message
-        console.log(" I'm in login");
-        res.render("login.ejs");
-      });
-      
-      router.get("/users/dashboard", utils.checkNotAuthenticated, (req, res) => {
-        console.log(req.isAuthenticated());
-        res.render("dashboard", { user: req.user.name });
-      });
-      
-      
+module.exports.initUserRoutes = (passport) => {      
+      router.get("/users/dashboard", utils.checkAuthenticated);
+    
       router.get('/users/logout', function(req, res) {
         req.logout(function(err) {
           if (err) { 
-            console.log(" ERROR IN LOGOUT ");
-            throw err;
+            res.status(500).send({message: "Error in Logout"});
+          }else{
+            res.status(200).send({message: "Logout successffuly"}); //info contains the error message
           }
-          res.redirect('/users/login');
         });
       });   
-      
       
       router.post('/users/register' , createUser);
       

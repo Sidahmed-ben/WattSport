@@ -1,14 +1,16 @@
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-      return res.redirect("/users/dashboard");
+      res.status(200).send( { message: " User authentication is confirmed from server"});
+    }else{
+      res.status(401).send( { message: " User not authorized from server"});
     }
-    next();
   }
   
   function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
       return next();
     }
+    
     res.redirect("/users/login");
 }
 

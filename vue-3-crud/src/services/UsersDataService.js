@@ -6,8 +6,20 @@ class UsersDataService {
   }
 
   loginUser(data) {
-    return http.post("/users/login", data);
+    return http.post("/users/login",data);
   }
+
+  checkUserHomeAutho() {
+    return http.get("/users/dashboard");
+  }
+
+  logoutUser(){
+    return http.get('/users/logout');
+  }
+
+  // authenticate(){
+  //   return http.get()
+  // }
 //   get(id) {
 //     return http.get(`/tutorials/${id}`);
 //   }
