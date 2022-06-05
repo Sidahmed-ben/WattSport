@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 
 // Called whaen Post Register User is triggered
 createUser = async (req,res) =>{
-    let { name, email, password, password2} = req.body;
+    let { name, email, password, password2, user} = req.body;
     console.log(req.body);
 
     console.log(
@@ -12,12 +12,11 @@ createUser = async (req,res) =>{
             name,
             email,
             password,
-            password2           
+            password2,
+            user  
         }
     );
-  
-
-    if(!name || !email || !password || !password2){
+    if(!name || !email || !password || !password2 || !user){
       res.status(400).send({message : `INPUT ERROR : EMPTY INPUT NAME OR EMAIL OR PASSWORD OR PASSWORD2`})
     }
     
@@ -34,40 +33,64 @@ createUser = async (req,res) =>{
     let hashedPassword = await bcrypt.hash(password, salt);
     console.log(hashedPassword);
     console.log("I AM HERE ");
-  
-    pool.query(
-        'SELECT * FROM users WHERE email = $1', 
+    let table;
+    switch (user){
+      case 'isCoach' :
+        table = "coach"
+        break;
+      case 'isEntrain':
+        table = "entrain"  
+        break;
+      default:
+        res.status(500).send({message: ` User Type Undefined `});
+    }
+    // Enregistrer un sportif
+      pool.query(
+        `SELECT * FROM ${table} WHERE email = $1`, 
         [email] , 
         (err,result) => {
             if(err){
                 // Error when sending db request
-                res.status(500).send({message : `ERROR IN SELECTING USER WITH EMAIL ${email}`})
+                return res.status(500).send({message : `ERROR IN SELECTING USER WITH EMAIL ${email}`})
             }
             const match_email_list = result.rows
             if(match_email_list.length != 0){
                 res.status(409).send({message: `Email ${email} already exists`});
             }else{
                 pool.query(
-                    `INSERT INTO users (name, email, password)
+                    `INSERT INTO ${table} (name, email, password)
                     VALUES ($1, $2, $3)`,[name,email,hashedPassword],
                     (err,result) => {
                         if(err)  {
-                            res.status(500).send({message: ` ERROR IN INSERTING USER ${name}`});
+                            return res.status(500).send({message: ` ERROR IN INSERTING USER ${name}`});
                         }   
-                        res.status(200).send({message: ` ${name} Registered successfully`});
+                        return res.status(200).send({message: ` ${name} Registered successfully`});
                     }
                 )
             }
-        }
-    )
+          }
+        )
+
+
 }
 
 
 // Called by passport when login Post is triggered
-authenticateUser = (email, password, done) => {
-    console.log(email, password);
+authenticateUser = (req,email, password, done) => {
+    console.log(req.body.user,email, password);
+    let table;
+    switch (req.body.user){
+      case 'isCoach' :
+        table = "coach"
+        break;
+      case 'isEntrain':
+        table = "entrain"
+        break;
+      default:
+        return done(null,false);
+    }
     pool.query(
-      `SELECT * FROM users WHERE email = $1`,
+      `SELECT * FROM ${table} WHERE email = $1`,
       [email],
       (err, results) => {
         if (err) {
@@ -82,6 +105,7 @@ authenticateUser = (email, password, done) => {
             }
             if (isMatch) {
               console.log(" User found ");
+              user.type = req.body.user;
               return done(null, user);
             } else {
               //password is incorrect

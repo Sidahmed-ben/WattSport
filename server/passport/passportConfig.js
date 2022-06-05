@@ -11,7 +11,7 @@ function initialize(passport) {
   // Initialize authentication strategy
   passport.use(
     new LocalStrategy(
-      { usernameField: "email", passwordField: "password" },
+      { usernameField: "email", passwordField: "password" , passReqToCallback : true},
       authenticateUser
     )
   );
@@ -20,13 +20,32 @@ function initialize(passport) {
   // object should be stored in the session. The result of the serializeUser method is attached
   // to the session as req.session.passport.user = {}. Here for instance, it would be (as we provide
   //   the user id as the key) req.session.passport.user = {id: 'xyz'}
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user, done) => 
+    {
+      console.log(user)
+      let serializeInfo = {id: user.id, type: user.type}
+      done(null, serializeInfo, user.user)
+    }
+    );
 
   // In deserializeUser that key is matched with the in memory array / database or any data resource.
   // The fetched object is attached to the request object as req.user
 
-  passport.deserializeUser((id, done) => {
-    pool.query(`SELECT * FROM users WHERE id = $1`, [id], (err, results) => {
+  passport.deserializeUser((req,serializeInfo, done) => {
+    console.log("////////////////// ",serializeInfo);
+    let table;
+    switch (serializeInfo.type){
+      case 'isCoach' :
+        table = "coach"
+        break;
+      case 'isEntrain':
+        table = "entrain"
+        break;
+      default:
+        return done(null,false);
+    }
+
+    pool.query(`SELECT * FROM ${table} WHERE id = $1`, [serializeInfo.id], (err, results) => {
       if (err) {
         return done(err);
       }

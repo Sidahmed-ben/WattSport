@@ -14,6 +14,24 @@
                                 <div class="login-text">
                                     <p class="mb-4">Register</p>
                                 </div>
+                                <!-- Radio Button -->
+                                <div class="d-flex  justify-content-between" style="text-align: center; width: 250px; height: 50px; margin: 0px auto;">
+                                    <div class="form-check d-flex">
+                                        <div class="d-flex  ">
+                                            <input style="" class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" value="isEntrain" v-model="user" checked>
+                                            <label style="margin: 26px 5px" class="form-check-label" for="flexRadioDefault1">
+                                            S'entrainer
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check d-flex " style="position: relative;">
+                                      <input style=""  class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" value= "isCoach" v-model="user" >
+                                      <label style="margin: 26px 5px"  class="form-check-label" for="flexRadioDefault2">
+                                        Coacher
+                                      </label>
+                                    </div>
+                                </div>
+                                <!-- ----------------- -->
                                 <form  @submit.prevent="onSubmit">
                                     <div v-if="servErrors.length > 0">
                                         <p class="mb-4" style="color: red;"> {{ servErrors[0].error.message }} </p>
@@ -81,6 +99,7 @@
         components: {},
         data(){
             return{
+                user: "isEntrain",
                 servErrors : [],
                 v$: useVuelidate(),
                 form: {
@@ -115,6 +134,9 @@
                 }
             }
         },
+        updated() {
+            console.log(`${this.user}`);
+        },
         methods:{
             onSubmit(){
                 this.v$.$validate();
@@ -131,23 +153,23 @@
                     email: this.form.email,
                     password: this.form.password,
                     password2: this.form.password2,
+                    user: this.user
                 };
-
                 this.servErrors = [];
-                UsersDataService.registerUser(data)
-                    .then(() => {
-                      console.log(" Users registered succeffuly");
-                      this.$router.push('/login');
-                    })
-                    .catch(e => {
-                        if(e.response.status === 400 || e.response.status === 500 || e.response.status === 409 ){
-                            console.log(e.response.data);
-                            this.servErrors.push({error : e.response.data});
-                        }else{
-                            console.log(" ERROR CAN NOT BE IDENTIFIED ?? ");
-                        }
+                    UsersDataService.registerUser(data)
+                        .then(() => {
+                          console.log(" User registered succeffuly");
+                          this.$router.push('/login');
+                        })
+                        .catch(e => {
+                            if(e.response.status === 400 || e.response.status === 500 || e.response.status === 409 ){
+                                console.log(e.response.data);
+                                this.servErrors.push({error : e.response.data});
+                            }else{
+                                console.log(" ERROR CAN NOT BE IDENTIFIED ?? ");
+                            }
                     
-                    });
+                        });
             }
         }
 
