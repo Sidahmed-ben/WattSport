@@ -7,8 +7,7 @@
           <div class="row">
             <div class="col-sm-6">
               <h2>
-                Manage
-                <b>Employees</b>
+                  <b>{{ titreTableau }}</b>
               </h2>
             </div>
             <div class="col-sm-6">
@@ -36,7 +35,7 @@
               <thead >
                 <tr>
                   <th v-for="(column, index) in columns" :key="index">
-                    {{ column }}
+                    {{ column.column }}
                   </th>
                 </tr>
               </thead>
@@ -51,7 +50,7 @@
                   href="#editEmployeeModal"
                   class="edit"
                   data-toggle="modal"
-                  @click="editEmployeeModal = true"
+                  @click="editEmployeeModalFunc(index1);"
                 >
                   <i class="material-icons" data-toggle="tooltip" title="Edit"
                     >&#xE254;</i
@@ -61,7 +60,7 @@
                   href="#deleteEmployeeModal"
                   class="delete"
                   data-toggle="modal"
-                  @click="deleteEmployeeModal = true"
+                  @click="deleteEmployeeModal = true;selectedRow = index1;"
                 >
                   <i class="material-icons" data-toggle="tooltip" title="Delete"
                     >&#xE872;</i
@@ -69,36 +68,9 @@
                 </a>
               </td>
             </tr>
-            
           </tbody>
-
-        <!-- Pagination  -->
         </table>
-        <div class="clearfix">
-          <ul class="pagination">
-            <li class="page-item disabled">
-              <a href="#">Previous</a>
-            </li>
-            <li class="page-item">
-              <a href="#" class="page-link">1</a>
-            </li>
-            <li class="page-item">
-              <a href="#" class="page-link">2</a>
-            </li>
-            <li class="page-item active">
-              <a href="#" class="page-link">3</a>
-            </li>
-            <li class="page-item">
-              <a href="#" class="page-link">4</a>
-            </li>
-            <li class="page-item">
-              <a href="#" class="page-link">5</a>
-            </li>
-            <li class="page-item">
-              <a href="#" class="page-link">Next</a>
-            </li>
-          </ul>
-        </div>
+        <!--  Fin du tableau  -->
       </div>
     </div>
   </div>
@@ -167,32 +139,18 @@
             </button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <label>Name</label>
-              <input type="text" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Address</label>
-              <textarea class="form-control" required></textarea>
-            </div>
-            <div class="form-group">
-              <label>Phone</label>
-              <input type="text" class="form-control" required />
+            <div v-for="(column,index) in columns"  class="form-group" :key="index">
+              <label v-if ="column.type">{{ column.column }}</label>
+              <input v-if ="column.type" type={{column.type}} class="form-control" v-model="selectedRowContent[index]" required />
             </div>
           </div>
           <div class="modal-footer">
-            <input
-              type="button"
+            <button
               class="btn btn-default"
               data-dismiss="modal"
-              value="Cancel"
               @click="editEmployeeModal = false"
-            />
-            <input type="submit" class="btn btn-info" value="Save" />
+            > Annuler</button>
+            <button class="btn btn-info" @click.prevent="editEmployeeModalFuncSave"> Confirmer </button>
           </div>
         </form>
       </div>
@@ -202,7 +160,6 @@
   <div id="deleteEmployeeModal" v-if="deleteEmployeeModal">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form>
           <div class="modal-header">
             <h4 class="modal-title">Delete Employee</h4>
             <button
@@ -222,16 +179,13 @@
             </p>
           </div>
           <div class="modal-footer">
-            <input
-              type="button"
+            <button
               class="btn btn-default"
               data-dismiss="modal"
-              value="Cancel"
               @click="deleteEmployeeModal = false"
-            />
-            <input type="submit" class="btn btn-danger" value="Delete" />
+            > Annuler </button>
+            <button class="btn btn-danger" @click="deleteEmployeeModalFunc()">Supprimer</button>
           </div>
-        </form>
       </div>
     </div>
   </div>
@@ -239,6 +193,7 @@
 
 <script>
 export default {
+
   name: "TableCmp",
   components: {},
   props: [],
@@ -246,43 +201,78 @@ export default {
     return {
       items: [],
       columns: [],
-      nbrColumns: 0,
+      titreTableau: "",
       editEmployeeModal: false,
       addEmployeeModal: false,
       deleteEmployeeModal: false,
+      selectedRow : null,
+      selectedRowContent: []
     };
   },
   mounted() {
-
-
     this.items = [{columns: ["Thomas Hardy 1","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Thomas Hardy","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
-                  {columns: ["Thomas Hardy","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
-                  {columns: ["Thomas Hardy","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                 
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                 
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]}
+                  {columns: ["Dominique Perrier 2","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Thomas Hardy 3","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
+                  {columns: ["Thomas Hardy 4","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
+                  {columns: ["Thomas Hardy 5","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
+                  {columns: ["Dominique Perrier 6","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 7","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 8","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                 
+                  {columns: ["Dominique Perrier 9","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 10","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 11","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
+                  {columns: ["Dominique Perrier 12","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 13","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 14","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
+                  {columns: ["Dominique Perrier 15","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 16","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 17","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                 
+                  {columns: ["Dominique Perrier 18","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 19","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 20","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
+                  {columns: ["Dominique Perrier 21","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 22","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
+                  {columns: ["Dominique Perrier 23","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]}
                 ],
-    this.columns = ["Nom", "Mail", "Adresse", "Tél", "Actions"];
-    this.nbrColumns = this.columns.length ;
+    this.columns = [{column:"Nom",type:"text"},{column:"Email",type:"email"},{column:"Adresse",type:"text"},{column:"Tél",type:"number"},{column:"Actions",type:null}];
+    this.titreTableau = "Séances" ;
     console.log(" Mounted ");
   },
+
+  methods:{
+    editEmployeeModalFunc(index){
+      this.editEmployeeModal = true;
+      this.selectedRow = index;
+      this.selectedRowContent  = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+      console.log(this.selectedRowContent)
+    },
+    editEmployeeModalFuncSave(){
+      let avantModification  = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+      // console.log(avantModification);
+      let apresModification = JSON.parse(JSON.stringify(this.selectedRowContent));
+      // console.log(apresModifiction);
+      // console.log(avantModification.length);
+      for( let i = 0 ; i < avantModification.length ; i++){
+        // console.log(avantModification[i])
+        // console.log(apresModification[i])
+        if(avantModification[i].trim() !== apresModification[i].trim()){
+          console.log("Modified")
+          return;
+        }
+      }
+      console.log("notModified");
+
+
+
+
+    },
+    deleteEmployeeModalFunc(){
+      let index = this.selectedRow
+      console.log("selectedRow : ",this.items[index]);
+      this.items.splice(index, 1);
+      this.deleteEmployeeModal = false;
+    }
+  }
 };
 </script>
 
