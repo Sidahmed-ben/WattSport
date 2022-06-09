@@ -13,6 +13,7 @@ class UsersDataService {
     return http.get("/users/dashboard");
   }
 
+
   logoutUser(){
     return http.get('/users/logout');
   }

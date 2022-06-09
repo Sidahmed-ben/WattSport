@@ -1,7 +1,9 @@
 import { createWebHistory, createRouter } from "vue-router";
 import HomePage from "../pages/HomePage";
 import RegisterPage from "../pages/RegisterPage";
-import UserHomePage from "../pages/UserHomePage";
+// import UserHomePage from "../pages/UserHomePage";
+import CoachHomePage from "../pages/CoachHomePage";
+import SeancesPage from "../pages/SeancesPage";
 import UsersDataService from "../services/UsersDataService";
 
 
@@ -17,14 +19,24 @@ const routes =  [
     name: "RegisterPage",
     component: RegisterPage,
   },
+  // {
+  //   path: "/coach",
+  //   name: "UserHomePage",
+  //   component: UserHomePage,
+  //   meta: {
+  //     userMustAuth: true
+  //   }
+  // },
   {
-    path: "/user",
-    name: "UserHomePage",
-    component: UserHomePage,
-    meta: {
-      userMustAuth: true
-    }
-  }  
+    path: "/coach/profil",
+    name: "CoachHomePage",
+    component: CoachHomePage,
+  },
+  {
+    path: "/coach/seances",
+    name: "SeancesPage",
+    component: SeancesPage,
+  },
 
 ];
 

@@ -4,9 +4,6 @@
       <input type="checkbox" id="check">
   <!--header area start-->
   <header>
-    <label for="check">
-      <i class="fas fa-bars" id="sidebar_btn"></i>
-    </label>
     <div class="left_area">
       <h3>Watt Sport</h3>
     </div>
@@ -24,8 +21,9 @@
 
     </center>
 
-    <a href="/student-dashboard"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
-    <a href="/student-attendance"><i class="fas fa-address-card"></i><span>Attendance</span></a>
+    <router-link to="" class="nav-link"><span>Profil</span></router-link>
+    <router-link to="/coach/seances" class="nav-link"><span>Séances</span></router-link>
+    
 
   </div>
   <!--sidebar end-->
@@ -84,19 +82,7 @@
 
 
     <br><br><br>
-
-
-    <!-- {% include "school/footer.html" %} -->
   </div>
-  <!--content end-->
-
-
-    
-
-  <!-- <script src="http://netdna.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
-  <script type="text/javascript">
-
-  </script> -->
 
 </template>
   
@@ -105,7 +91,7 @@
   import UsersDataService from '@/services/UsersDataService';
 
   export default {
-    name: 'UserHomePage',
+    name: 'CoachHomePage',
     components: {},
     props: [],
     data(){

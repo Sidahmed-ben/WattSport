@@ -5,8 +5,11 @@ const utils = require("./utils");
 let createUser = require('../controllers/userController').createUser;
 
 
-module.exports.initUserRoutes = (passport) => {      
+module.exports.initUserRoutes = (passport) => {   
+      /** Get user Dashboard */  
       router.get("/users/dashboard", utils.checkAuthenticated);
+      router.get("/users/coach/dashboard", utils.checkAuthenticated);
+
     
       router.get('/users/logout', function(req, res) {
         req.logout(function(err) {
@@ -18,8 +21,10 @@ module.exports.initUserRoutes = (passport) => {
         });
       });   
       
+      /** Post user Registration */  
       router.post('/users/register' , createUser);
       
+      /** Post user Login */  
       router.post(
         "/users/login",
         // FIND SOLUTION HERE FOR RETURNING STATUS ERROR
@@ -39,6 +44,9 @@ module.exports.initUserRoutes = (passport) => {
           })(req, res, next);
       }
     );
+
+
+
     
     
 }
