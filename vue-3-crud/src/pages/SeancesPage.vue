@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
   <!--header area start-->
-  <header>
+  <header :class="{ disable: disable  }">
     <div class="left_area">
       <h3>Watt Sport</h3>
     </div>
@@ -21,7 +21,7 @@
   </header>
   <!--header area end-->
   <!--sidebar start-->
-  <div class="sidebar">
+  <div class="sidebar"  :class="{ disable: disable  }">
     <center>
       <img src="../../public/home.png" class="profile_image" alt />
       <h4>{{ "User name" }}</h4>
@@ -35,13 +35,14 @@
   </div>
   <!--sidebar end-->
   <!--content start-->
-  <div class="content">
+  <div class="content"  :class="{ disable: disable  }">
     <br />
     <br />
     <br />
     <br />
     <br />
-    <TableCmp></TableCmp>
+    <!-- <TableCmp @clicked="onClickChild"></TableCmp> -->
+    <DateTimeCmp ></DateTimeCmp>
     <br />
     <br />
     <br />
@@ -50,14 +51,16 @@
 
 <script>
 import UsersDataService from "@/services/UsersDataService";
-import TableCmp from "../components/TableCmp.vue"
+// import TableCmp from "../components/TableCmp.vue"
+import DateTimeCmp from "../components/DateTimeCmp.vue"
 export default {
 
   name: "SeancesPage",
-  components: {TableCmp},
+  components: {DateTimeCmp},
   props: [],
   data() {
     return {
+      disable: false,
       editEmployeeModal : false,
       addEmployeeModal : false,
       deleteEmployeeModal : false
@@ -77,6 +80,11 @@ export default {
           this.servErrors.push({ error: e.response.data });
         });
     },
+    onClickChild(disable){
+      console.log("onclick");
+      this.disable = disable
+    }
+
   },
 };
 </script>
@@ -233,5 +241,8 @@ header {
 }
 /* ---------------------------------------------- */
 
+.disable{
+  pointer-events: none;
+}
 
 </style>

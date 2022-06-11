@@ -1,8 +1,7 @@
-<template>
-  <div class="container-xl div-cont-xl">
+<template >
+  <div class="container-xl div-cont-xl" >
     <div class="table-responsive">
       <div class="table-wrapper" >
-        
         <div class="table-title">
           <div class="row">
             <div class="col-sm-6">
@@ -11,22 +10,13 @@
               </h2>
             </div>
             <div class="col-sm-6">
-              <a
-                href="#addEmployeeModal"
+              <button
+                @click="disableArea();addEmployeeModal=true"
                 class="btn btn-success"
-                data-toggle="modal"
-              >
+                data-toggle="modal">
                 <i class="material-icons">&#xE147;</i>
-                <span>Add New Employee</span>
-              </a>
-              <a
-                href="#deleteEmployeeModal"
-                class="btn btn-danger"
-                data-toggle="modal"
-              >
-                <i class="material-icons">&#xE15C;</i>
-                <span>Delete</span>
-              </a>
+                <span>Ajouter une nouvelle séance</span>
+              </button>
             </div>
           </div>
         </div>
@@ -47,20 +37,18 @@
                 </td>
                 <td>
                 <a
-                  href="#editEmployeeModal"
                   class="edit"
                   data-toggle="modal"
-                  @click="editEmployeeModalFunc(index1);"
+                  @click="disableArea();editEmployeeModalFunc(index1);"
                 >
                   <i class="material-icons" data-toggle="tooltip" title="Edit"
                     >&#xE254;</i
                   >
                 </a>
                 <a
-                  href="#deleteEmployeeModal"
                   class="delete"
                   data-toggle="modal"
-                  @click="deleteEmployeeModal = true;selectedRow = index1;"
+                  @click="disableArea();deleteEmployeeModal=true;selectedRow = index1;"
                 >
                   <i class="material-icons" data-toggle="tooltip" title="Delete"
                     >&#xE872;</i
@@ -74,7 +62,7 @@
       </div>
     </div>
   </div>
-  <!-- Edit Modal HTML -->
+  <!-- Add Modal HTML -->
   <div id="addEmployeeModal" v-if="addEmployeeModal">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -82,40 +70,28 @@
           <div class="modal-header">
             <h4 class="modal-title">Add Employee</h4>
             <button
-              type="button"
+              @click="enableArea();addEmployeeModal=false"
               class="close"
               data-dismiss="modal"
               aria-hidden="true"
-            >
+              >
               &times;
             </button>
           </div>
           <div class="modal-body">
-            <div class="form-group">
-              <label>Name</label>
-              <input type="text" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Email</label>
-              <input type="email" class="form-control" required />
-            </div>
-            <div class="form-group">
-              <label>Address</label>
-              <textarea class="form-control" required></textarea>
-            </div>
-            <div class="form-group">
-              <label>Phone</label>
-              <input type="text" class="form-control" required />
+            <div v-for="(column, index) in columns" :key="index" class="form-group">
+              <label v-if ="column.type">{{column.column}}</label>
+              <input v-if ="column.type" type={{column.type}} class="form-control" v-model ="addedRowContent[index]" required />
             </div>
           </div>
           <div class="modal-footer">
-            <input
+            <button
+              @click="enableArea();addEmployeeModal=false"
               type="button"
               class="btn btn-default"
-              data-dismiss="modal"
-              value="Cancel"
-            />
-            <input type="submit" class="btn btn-success" value="Add" />
+              data-dismiss="modal">
+              Annuler</button>
+            <button type="submit" class="btn btn-success" @click.prevent="enableArea();addEmployeeModal=false;addEmployeeModalFunc()"> Ajouter </button>
           </div>
         </form>
       </div>
@@ -125,15 +101,14 @@
   <div id="editEmployeeModal" v-if="editEmployeeModal">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form>
+        <form >
           <div class="modal-header">
             <h4 class="modal-title">Edit Employee</h4>
             <button
               type="button"
               class="close"
               data-dismiss="modal"
-              aria-hidden="true"
-              @click="editEmployeeModal = false"
+              @click="enableArea();editEmployeeModal = false"
             >
               &times;
             </button>
@@ -148,9 +123,9 @@
             <button
               class="btn btn-default"
               data-dismiss="modal"
-              @click="editEmployeeModal = false"
+              @click="enableArea();editEmployeeModal = false"
             > Annuler</button>
-            <button class="btn btn-info" @click.prevent="editEmployeeModalFuncSave"> Confirmer </button>
+            <button class="btn btn-info" @click.prevent="enableArea();editEmployeeModalFuncSave()"> Confirmer </button>
           </div>
         </form>
       </div>
@@ -167,7 +142,7 @@
               class="close"
               data-dismiss="modal"
               aria-hidden="true"
-              @click="deleteEmployeeModal = false"
+              @click="enableArea();deleteEmployeeModal = false"
             >
               &times;
             </button>
@@ -182,9 +157,9 @@
             <button
               class="btn btn-default"
               data-dismiss="modal"
-              @click="deleteEmployeeModal = false"
+              @click="enableArea();deleteEmployeeModal = false"
             > Annuler </button>
-            <button class="btn btn-danger" @click="deleteEmployeeModalFunc()">Supprimer</button>
+            <button class="btn btn-danger" @click="enableArea();deleteEmployeeModalFunc()">Supprimer</button>
           </div>
       </div>
     </div>
@@ -199,6 +174,7 @@ export default {
   props: [],
   data() {
     return {
+      isDesactive: false,
       items: [],
       columns: [],
       titreTableau: "",
@@ -206,35 +182,29 @@ export default {
       addEmployeeModal: false,
       deleteEmployeeModal: false,
       selectedRow : null,
-      selectedRowContent: []
+      selectedRowContent: [],
+      addedRowContent : []
     };
   },
   mounted() {
-    this.items = [{columns: ["Thomas Hardy 1","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
-                  {columns: ["Dominique Perrier 2","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Thomas Hardy 3","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
-                  {columns: ["Thomas Hardy 4","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
-                  {columns: ["Thomas Hardy 5","thomashardy@mail.com","89 Chiaroscuro Rd, Portland, USA","(171) 555-2222"]},
-                  {columns: ["Dominique Perrier 6","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 7","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 8","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                 
-                  {columns: ["Dominique Perrier 9","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 10","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 11","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
-                  {columns: ["Dominique Perrier 12","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 13","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 14","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
-                  {columns: ["Dominique Perrier 15","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 16","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 17","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                 
-                  {columns: ["Dominique Perrier 18","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 19","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 20","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},                  
-                  {columns: ["Dominique Perrier 21","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 22","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]},
-                  {columns: ["Dominique Perrier 23","dominiqueperrier@mail.com","Obere Str. 57, Berlin, Germany","(313) 555-5735"]}
+    this.items = [{columns: ["Titre Seance 1"," Date 1 ","Heure 1"]},
+                  {columns: ["Titre Seance 2"," Date 2 ","Heure 2"]},
+                  {columns: ["Titre Seance 3"," Date 3 ","Heure 3"]},
+                  {columns: ["Titre Seance 4"," Date 4 ","Heure 4"]},
+                  {columns: ["Titre Seance 5"," Date 5 ","Heure 5"]},
+                  {columns: ["Titre Seance 6"," Date 6 ","Heure 6"]},
+                  {columns: ["Titre Seance 7"," Date 7 ","Heure 7"]},
+                  {columns: ["Titre Seance 8"," Date 8 ","Heure 8"]},
+                  {columns: ["Titre Seance 9"," Date 9 ","Heure 9"]},
+                  {columns: ["Titre Seance 10"," Date 10 ","Heure 10"]},
+                  {columns: ["Titre Seance 11"," Date 11 ","Heure 11"]},
+                  {columns: ["Titre Seance 12"," Date 12 ","Heure 12"]},
+                  {columns: ["Titre Seance 13"," Date 13 ","Heure 13"]},
+                  {columns: ["Titre Seance 14"," Date 14 ","Heure 14"]},
+                  {columns: ["Titre Seance 15"," Date 15 ","Heure 15"]},
+                  {columns: ["Titre Seance 16"," Date 16 ","Heure 16"]}
                 ],
-    this.columns = [{column:"Nom",type:"text"},{column:"Email",type:"email"},{column:"Adresse",type:"text"},{column:"Tél",type:"number"},{column:"Actions",type:null}];
+    this.columns = [{column:"Titre",type:"text"},{column:"Date",type:"date"},{column:"Heure",type:"date"},{column:"Actions",type:null}];
     this.titreTableau = "Séances" ;
     console.log(" Mounted ");
   },
@@ -248,22 +218,17 @@ export default {
     },
     editEmployeeModalFuncSave(){
       let avantModification  = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
-      // console.log(avantModification);
       let apresModification = JSON.parse(JSON.stringify(this.selectedRowContent));
-      // console.log(apresModifiction);
-      // console.log(avantModification.length);
+      console.log("Nomalize",this.normalize_spaces(apresModification[0].trim()))
       for( let i = 0 ; i < avantModification.length ; i++){
-        // console.log(avantModification[i])
-        // console.log(apresModification[i])
-        if(avantModification[i].trim() !== apresModification[i].trim()){
+        if(this.normalize_spaces(avantModification[i]) !== this.normalize_spaces(apresModification[i])){
           console.log("Modified")
-          return;
+          console.log(apresModification);
+          // Ajouter l'élément modifiè dans le tableau 
+          this.items.splice(this.selectedRow, 1,{columns : apresModification});
         }
       }
-      console.log("notModified");
-
-
-
+      this.editEmployeeModal = false;
 
     },
     deleteEmployeeModalFunc(){
@@ -271,8 +236,22 @@ export default {
       console.log("selectedRow : ",this.items[index]);
       this.items.splice(index, 1);
       this.deleteEmployeeModal = false;
+    },
+    normalize_spaces(str){ 
+      return  str.trim().replace(/\s+/g, ' ') 
+    },
+    disableArea(){
+      this.$emit('clicked', true)
+    },
+    enableArea(){
+      console.log("Enable");
+      this.$emit('clicked', false)
+    },
+    addEmployeeModalFunc(){
+      console.log(JSON.parse(JSON.stringify(this.addedRowContent)));
     }
-  }
+
+    }
 };
 </script>
 
@@ -344,7 +323,7 @@ table.table tr td {
   vertical-align: middle;
 }
 table.table tr th:first-child {
-  width: 60px;
+  width: auto;
 }
 table.table tr th:last-child {
   width: 100px;
@@ -376,9 +355,11 @@ table.table td a:hover {
   color: #2196f3;
 }
 table.table td a.edit {
+  cursor: pointer;
   color: #ffc107;
 }
 table.table td a.delete {
+  cursor: pointer;
   color: #f44336;
 }
 table.table td i {
@@ -530,4 +511,5 @@ table.table .avatar {
   margin-top: 0;
 }
 /* ---------------------------------------------- */
+
 </style>
