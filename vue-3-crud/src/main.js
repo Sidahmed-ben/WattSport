@@ -5,5 +5,9 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import router from './router'
 // Vue.use(BootstrapVue)
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
-createApp(App).use(router).mount('#app')
+
+createApp(App).component('Datepicker', Datepicker).use(router).mount('#app')
+ 

@@ -12,12 +12,15 @@ const routes =  [
     path: "/",
     alias: '/login',
     name: "HomePage",
-    component: HomePage
+    component: HomePage,
+    props: true
   },
   {
     path: "/register",
     name: "RegisterPage",
     component: RegisterPage,
+    props: true
+
   },
   // {
   //   path: "/coach",
@@ -31,11 +34,15 @@ const routes =  [
     path: "/coach/profil",
     name: "CoachHomePage",
     component: CoachHomePage,
+    props: true
+
   },
   {
     path: "/coach/seances",
     name: "SeancesPage",
     component: SeancesPage,
+    props: true
+
   },
 
 ];

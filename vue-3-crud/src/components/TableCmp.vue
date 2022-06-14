@@ -33,6 +33,7 @@
           <tbody>
               <tr v-for ="(item,index1) in items" :key="index1" >
                 <td v-for="(column,index2) in item.columns" :key="index2">
+
                     {{ column }}
                 </td>
                 <td>
@@ -65,7 +66,7 @@
   <!-- Add Modal HTML -->
   <div id="addEmployeeModal" v-if="addEmployeeModal">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content"> 
         <form>
           <div class="modal-header">
             <h4 class="modal-title">Add Employee</h4>
@@ -115,8 +116,15 @@
           </div>
           <div class="modal-body">
             <div v-for="(column,index) in columns"  class="form-group" :key="index">
-              <label v-if ="column.type">{{ column.column }}</label>
-              <input v-if ="column.type" type={{column.type}} class="form-control" v-model="selectedRowContent[index]" required />
+              <div v-if ="column.type !== null && column.type !== 'TimePicker'">
+                <label >{{ column.column }}</label>
+                <input  type={{column.type}} class="form-control" v-model="selectedRowContent[index]" required />
+              </div>
+              <div v-if= "column.type === 'TimePicker'">
+                <label >{{ column.column }}</label>
+                <DateTimeCmp  :defaultTime="defaultTime"  @DateUpdated="DateUpdated" ></DateTimeCmp>
+              </div>
+
             </div>
           </div>
           <div class="modal-footer">
@@ -167,10 +175,12 @@
 </template>
 
 <script>
+
+ import DateTimeCmp from "./DateTimeCmp.vue";
 export default {
 
   name: "TableCmp",
-  components: {},
+  components: {DateTimeCmp},
   props: [],
   data() {
     return {
@@ -183,49 +193,57 @@ export default {
       deleteEmployeeModal: false,
       selectedRow : null,
       selectedRowContent: [],
-      addedRowContent : []
+      addedRowContent : [],
+      defaultTime : null,
+      editedDate : null
     };
   },
   mounted() {
-    this.items = [{columns: ["Titre Seance 1"," Date 1 ","Heure 1"]},
-                  {columns: ["Titre Seance 2"," Date 2 ","Heure 2"]},
-                  {columns: ["Titre Seance 3"," Date 3 ","Heure 3"]},
-                  {columns: ["Titre Seance 4"," Date 4 ","Heure 4"]},
-                  {columns: ["Titre Seance 5"," Date 5 ","Heure 5"]},
-                  {columns: ["Titre Seance 6"," Date 6 ","Heure 6"]},
-                  {columns: ["Titre Seance 7"," Date 7 ","Heure 7"]},
-                  {columns: ["Titre Seance 8"," Date 8 ","Heure 8"]},
-                  {columns: ["Titre Seance 9"," Date 9 ","Heure 9"]},
-                  {columns: ["Titre Seance 10"," Date 10 ","Heure 10"]},
-                  {columns: ["Titre Seance 11"," Date 11 ","Heure 11"]},
-                  {columns: ["Titre Seance 12"," Date 12 ","Heure 12"]},
-                  {columns: ["Titre Seance 13"," Date 13 ","Heure 13"]},
-                  {columns: ["Titre Seance 14"," Date 14 ","Heure 14"]},
-                  {columns: ["Titre Seance 15"," Date 15 ","Heure 15"]},
-                  {columns: ["Titre Seance 16"," Date 16 ","Heure 16"]}
+    this.items = [{columns: ["Titre Seance 1","2025-09-01","22:01"]},
+                  {columns: ["Titre Seance 2","2025-09-02","22:01"]},
+                  {columns: ["Titre Seance 3","2025-09-03","22:01"]},
+                  {columns: ["Titre Seance 4","2025-09-04","22:01"]},
+                  {columns: ["Titre Seance 5","2025-09-05","22:01"]},
+                  {columns: ["Titre Seance 6","2025-09-06","22:01"]},
+                  {columns: ["Titre Seance 7","2025-09-07","22:01"]},
+                  {columns: ["Titre Seance 8","2025-09-08","22:01"]},
+                  {columns: ["Titre Seance 9","2025-09-09","22:01"]},
+                  {columns: ["Titre Seance 10","2025-09-10","22:01"]},
+                  {columns: ["Titre Seance 11","2025-09-11","22:01"]},
+                  {columns: ["Titre Seance 12","2025-09-12s","22:01"]},
                 ],
-    this.columns = [{column:"Titre",type:"text"},{column:"Date",type:"date"},{column:"Heure",type:"date"},{column:"Actions",type:null}];
+    this.columns = [{column:"Titre",type:"text"},{column:"Date",type:"TimePicker"},{column:"Heure",type:null},{column:"Actions",type:null}];
     this.titreTableau = "Séances" ;
     console.log(" Mounted ");
   },
 
   methods:{
     editEmployeeModalFunc(index){
-      this.editEmployeeModal = true;
       this.selectedRow = index;
-      this.selectedRowContent  = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
-      console.log(this.selectedRowContent)
+      this.selectedRowContent = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+      // Set the default date in the edited frame and send it as prop
+      // Concatenate the date and the time 
+      // Delete additional spaces
+      this.defaultTime = this.without_spaces(this.selectedRowContent[1]+'T'+this.selectedRowContent[2]);
+      this.editEmployeeModal = true;
     },
     editEmployeeModalFuncSave(){
       let avantModification  = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
       let apresModification = JSON.parse(JSON.stringify(this.selectedRowContent));
-      console.log("Nomalize",this.normalize_spaces(apresModification[0].trim()))
+      // console.log("Nomalize",(apresModification))
+
+      // Update date 
+      this.saveNewDate();
+
+      // Update texts
       for( let i = 0 ; i < avantModification.length ; i++){
         if(this.normalize_spaces(avantModification[i]) !== this.normalize_spaces(apresModification[i])){
           console.log("Modified")
           console.log(apresModification);
           // Ajouter l'élément modifiè dans le tableau 
           this.items.splice(this.selectedRow, 1,{columns : apresModification});
+          this.editEmployeeModal = false;
+          return
         }
       }
       this.editEmployeeModal = false;
@@ -239,6 +257,9 @@ export default {
     },
     normalize_spaces(str){ 
       return  str.trim().replace(/\s+/g, ' ') 
+    },  
+    without_spaces(str){ 
+      return  str.trim().replace(/\s+/g, '') 
     },
     disableArea(){
       this.$emit('clicked', true)
@@ -249,6 +270,44 @@ export default {
     },
     addEmployeeModalFunc(){
       console.log(JSON.parse(JSON.stringify(this.addedRowContent)));
+    },
+    DateUpdated(time){
+      this.editedDate = time;
+      console.log('I am the table the time is ',this.editedDate);
+    },
+    saveNewDate(){
+      let zero_month = '' 
+      let zero_day = ''
+      let zero_hour = ''
+      let zero_minute = ''
+
+      if(this.editedDate.month < 10){
+          zero_month = '0'
+      }
+      if(this.editedDate.day < 10 ){
+          zero_day = '0'
+      }
+      if(this.editedDate.hour < 10 ){
+         zero_hour = '0'
+      }
+      if(this.editedDate.minute < 10 ){
+          zero_minute = '0'
+      }
+
+        let NewDate = this.editedDate.year+'-'+zero_month+this.editedDate.month+'-'+zero_day+this.editedDate.day
+        console.log(NewDate);
+        let NewTime = zero_hour+this.editedDate.hour+':'+zero_minute+this.editedDate.minute
+        console.log(NewTime);
+
+        if(this.items[this.selectedRow].columns[1] != NewDate || this.items[this.selectedRow].columns[2] != NewTime ){
+          console.log(" The date was edited by the user ");
+          this.items[this.selectedRow].columns[1] = NewDate;
+          this.items[this.selectedRow].columns[2] = NewTime;
+        }else{
+          console.log(" The date was NOT edited by the user ");
+        }
+
+
     }
 
     }
