@@ -1,6 +1,6 @@
+<!-- Test commit  -->
 <template>
     <Datepicker v-model="date" :format="format" @textSubmit="selectDate" ></Datepicker>
-    <!-- <h3> {{ date }}</h3> -->
 </template>
 
 <script>

@@ -306,10 +306,7 @@ export default {
         }else{
           console.log(" The date was NOT edited by the user ");
         }
-
-
     }
-
     }
 };
 </script>
