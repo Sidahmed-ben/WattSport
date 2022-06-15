@@ -80,10 +80,23 @@
             </button>
           </div>
           <div class="modal-body">
-            <div v-for="(column, index) in columns" :key="index" class="form-group">
+            <!-- <div v-for="(column, index) in columns" :key="index" class="form-group">
               <label v-if ="column.type">{{column.column}}</label>
               <input v-if ="column.type" type={{column.type}} class="form-control" v-model ="addedRowContent[index]" required />
+            </div> -->
+
+            <div v-for="(column,index) in columns"  class="form-group" :key="index">
+              <div v-if ="column.type !== null && column.type !== 'TimePicker'">
+                <label >{{ column.column }}</label>
+                <input  type={{column.type}} class="form-control" v-model ="addedRowContent[index]" required />
+              </div>
+              <div v-if= "column.type === 'TimePicker'">
+                <label >{{ column.column }}</label>
+                <DateTimeCmp  :defaultTime="defaultTime"  @DateUpdated="DateUpdated" ></DateTimeCmp>
+              </div>
             </div>
+
+
           </div>
           <div class="modal-footer">
             <button
@@ -106,9 +119,7 @@
           <div class="modal-header">
             <h4 class="modal-title">Edit Employee</h4>
             <button
-              type="button"
               class="close"
-              data-dismiss="modal"
               @click="enableArea();editEmployeeModal = false"
             >
               &times;
@@ -130,10 +141,9 @@
           <div class="modal-footer">
             <button
               class="btn btn-default"
-              data-dismiss="modal"
               @click="enableArea();editEmployeeModal = false"
             > Annuler</button>
-            <button class="btn btn-info" @click.prevent="enableArea();editEmployeeModalFuncSave()"> Confirmer </button>
+            <button type="submit" class="btn btn-info" @click.prevent="enableArea();editEmployeeModalFuncSave()"> Confirmer </button>
           </div>
         </form>
       </div>
@@ -149,7 +159,6 @@
               type="button"
               class="close"
               data-dismiss="modal"
-              aria-hidden="true"
               @click="enableArea();deleteEmployeeModal = false"
             >
               &times;
@@ -231,11 +240,11 @@ export default {
       let avantModification  = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
       let apresModification = JSON.parse(JSON.stringify(this.selectedRowContent));
       // console.log("Nomalize",(apresModification))
-
       // Update date 
       this.saveNewDate();
-
       // Update texts
+
+
       for( let i = 0 ; i < avantModification.length ; i++){
         if(this.normalize_spaces(avantModification[i]) !== this.normalize_spaces(apresModification[i])){
           console.log("Modified")
@@ -247,7 +256,6 @@ export default {
         }
       }
       this.editEmployeeModal = false;
-
     },
     deleteEmployeeModalFunc(){
       let index = this.selectedRow
@@ -269,7 +277,34 @@ export default {
       this.$emit('clicked', false)
     },
     addEmployeeModalFunc(){
+      let zero_month = '' 
+      let zero_day = ''
+      let zero_hour = ''
+      let zero_minute = ''
+
+      if(this.editedDate.month < 10){
+          zero_month = '0'
+      }
+      if(this.editedDate.day < 10 ){
+          zero_day = '0'
+      }
+      if(this.editedDate.hour < 10 ){
+         zero_hour = '0'
+      }
+      if(this.editedDate.minute < 10 ){
+          zero_minute = '0'
+      }
+
+      let NewDate = this.editedDate.year+'-'+zero_month+this.editedDate.month+'-'+zero_day+this.editedDate.day
+      // console.log(NewDate);
+      let NewTime = zero_hour+this.editedDate.hour+':'+zero_minute+this.editedDate.minute
+      // console.log(NewTime);
+      this.addedRowContent.push(NewDate);
+      this.addedRowContent.push(NewTime);
       console.log(JSON.parse(JSON.stringify(this.addedRowContent)));
+      this.items.unshift({columns: this.addedRowContent});
+      this.addedRowContent = [];
+
     },
     DateUpdated(time){
       this.editedDate = time;
