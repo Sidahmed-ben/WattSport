@@ -88,7 +88,10 @@
             <div v-for="(column,index) in columns"  class="form-group" :key="index">
               <div v-if ="column.type !== null && column.type !== 'TimePicker'">
                 <label >{{ column.column }}</label>
-                <input  type={{column.type}} class="form-control" v-model ="addedRowContent[index]" required />
+                <input  type={{column.type}} class="form-control" v-model ="addedRowContent.titre" required />
+                <div class="input-errors" v-if="v$.addedRowContent.titre.$errors.length > 0" :key="index">
+                  <div class="error-msg">{{ v$.addedRowContent.titre.$errors[0].$message }}</div>
+                </div>
               </div>
               <div v-if= "column.type === 'TimePicker'">
                 <label >{{ column.column }}</label>
@@ -105,7 +108,7 @@
               class="btn btn-default"
               data-dismiss="modal">
               Annuler</button>
-            <button type="submit" class="btn btn-success" @click.prevent="enableArea();addEmployeeModal=false;addEmployeeModalFunc()"> Ajouter </button>
+            <button type="submit" class="btn btn-success" @click.prevent="addEmployeeModalFunc()"> Ajouter </button>
           </div>
         </form>
       </div>
@@ -120,7 +123,7 @@
             <h4 class="modal-title">Edit Employee</h4>
             <button
               class="close"
-              @click="enableArea();editEmployeeModal = false"
+              @click="enableArea();editEmployeeModal = false;defaultTime = null"
             >
               &times;
             </button>
@@ -141,7 +144,7 @@
           <div class="modal-footer">
             <button
               class="btn btn-default"
-              @click="enableArea();editEmployeeModal = false"
+              @click="enableArea();editEmployeeModal = false;defaultTime = null"
             > Annuler</button>
             <button type="submit" class="btn btn-info" @click.prevent="enableArea();editEmployeeModalFuncSave()"> Confirmer </button>
           </div>
@@ -185,14 +188,26 @@
 
 <script>
 
- import DateTimeCmp from "./DateTimeCmp.vue";
-export default {
+  import DateTimeCmp from "./DateTimeCmp.vue";
+  import useVuelidate from '@vuelidate/core'
+  import { required } from '@vuelidate/validators'
 
+    export function
+    validTitre(titre) {
+            let validTitrePattern = new RegExp("^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
+            if (validTitrePattern.test(titre)){
+                return true;
+            }
+            return false;
+    }
+
+export default {
   name: "TableCmp",
   components: {DateTimeCmp},
   props: [],
   data() {
     return {
+      v$: useVuelidate(),
       isDesactive: false,
       items: [],
       columns: [],
@@ -202,11 +217,22 @@ export default {
       deleteEmployeeModal: false,
       selectedRow : null,
       selectedRowContent: [],
-      addedRowContent : [],
+      addedRowContent : {titre: null},
       defaultTime : null,
       editedDate : null
     };
   },
+  validations() {
+    return {
+      addedRowContent: {
+        titre :{
+          $validator: validTitre,
+          required,
+          $message: 'Titre Invalid'
+        }
+      },
+    }
+  },    
   mounted() {
     this.items = [{columns: ["Titre Seance 1","2025-09-01","22:01"]},
                   {columns: ["Titre Seance 2","2025-09-02","22:01"]},
@@ -221,7 +247,7 @@ export default {
                   {columns: ["Titre Seance 11","2025-09-11","22:01"]},
                   {columns: ["Titre Seance 12","2025-09-12s","22:01"]},
                 ],
-    this.columns = [{column:"Titre",type:"text"},{column:"Date",type:"TimePicker"},{column:"Heure",type:null},{column:"Actions",type:null}];
+    this.columns = [{column:"Titre",type:"text"},{column:"Date ( aaaa/mm/jj )",type:"TimePicker"},{column:"Heure",type:null},{column:"Actions",type:null}];
     this.titreTableau = "Séances" ;
     console.log(" Mounted ");
   },
@@ -243,8 +269,6 @@ export default {
       // Update date 
       this.saveNewDate();
       // Update texts
-
-
       for( let i = 0 ; i < avantModification.length ; i++){
         if(this.normalize_spaces(avantModification[i]) !== this.normalize_spaces(apresModification[i])){
           console.log("Modified")
@@ -255,7 +279,9 @@ export default {
           return
         }
       }
+
       this.editEmployeeModal = false;
+
     },
     deleteEmployeeModalFunc(){
       let index = this.selectedRow
@@ -281,7 +307,6 @@ export default {
       let zero_day = ''
       let zero_hour = ''
       let zero_minute = ''
-
       if(this.editedDate.month < 10){
           zero_month = '0'
       }
@@ -299,12 +324,29 @@ export default {
       // console.log(NewDate);
       let NewTime = zero_hour+this.editedDate.hour+':'+zero_minute+this.editedDate.minute
       // console.log(NewTime);
-      this.addedRowContent.push(NewDate);
-      this.addedRowContent.push(NewTime);
-      console.log(JSON.parse(JSON.stringify(this.addedRowContent)));
-      this.items.unshift({columns: this.addedRowContent});
-      this.addedRowContent = [];
 
+      let NewRow =  [this.addedRowContent.titre,NewDate,NewTime]
+      // this.addedRowContent.push(NewDate);
+      // this.addedRowContent.push(NewTime);
+      console.log(NewRow);
+
+      // Vérifier si le titre n'est pas vide avant d'ajouter un nouveau élément
+      ////////////////////////////////////////////////
+      ////////////////////////////////////////////////////
+      //////////////////////////////////////////////////
+      ////////////////////////////////////////// 
+      
+      // this.addedRowContent = ["test"];
+      this.v$.$validate();
+      console.log(this.v$);
+      if(this.v$){
+        return
+      }
+
+      this.items.unshift({columns: NewRow});
+      this.addedRowContent = [{title:null}];
+      this.enableArea();
+      this.addEmployeeModal = false;
     },
     DateUpdated(time){
       this.editedDate = time;

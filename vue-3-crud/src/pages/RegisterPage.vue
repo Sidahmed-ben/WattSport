@@ -110,13 +110,15 @@
                 }
             }
         },
+        
         validations() {
             return {
                 form: {
                     name: { 
-                        required, name_validation: {
-                        $validator: validName,
-                        $message: 'Invalid Name. Valid name only contain letters, dashes (-) and spaces'
+                        required, 
+                        name_validation: {
+                            $validator: validName,
+                            $message: 'Invalid Name. Valid name only contain letters, dashes (-) and spaces'
                         } 
                     },
                     email: {

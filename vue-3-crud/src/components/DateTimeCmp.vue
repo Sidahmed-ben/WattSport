@@ -1,6 +1,6 @@
 
 <template>
-    <Datepicker v-model="date" :format="format" @textSubmit="selectDate" ></Datepicker>
+    <Datepicker v-model="date" :format="format" :previewFormat="format"  ></Datepicker>
     <!-- <h3> {{ date }}</h3> -->
 </template>
 
@@ -8,6 +8,7 @@
     import Datepicker from '@vuepic/vue-datepicker';
     import '@vuepic/vue-datepicker/dist/main.css'
     
+
     export default {
         components: { Datepicker },
         props: ["defaultTime"],
@@ -18,7 +19,11 @@
         },
         mounted(){
             // console.log("I am in the dateTime component the default date is |",this.defaultTime,"|");
-            this.date = new Date(this.defaultTime);
+            if(this.defaultTime){
+                this.date = new Date(this.defaultTime);
+            }else{
+                this.date = new Date("2022-01-01T00:00");
+            }
             // console.log('this.date = ',this.date);
         },
         updated(){
