@@ -89,8 +89,8 @@
               <div v-if ="column.type !== null && column.type !== 'TimePicker'">
                 <label >{{ column.column }}</label>
                 <input  type={{column.type}} class="form-control" v-model ="addedRowContent.titre" required />
-                <div class="input-errors" v-if="v$.addedRowContent.titre.$errors.length > 0" :key="index">
-                  <div class="error-msg">{{ v$.addedRowContent.titre.$errors[0].$message }}</div>
+                <div class="input-errors" v-if="v$.addedRowContent.$errors.length > 0" :key="index">
+                  <div class="error-msg">{{ v$.addedRowContent.$errors[0].$message }}</div>
                 </div>
               </div>
               <div v-if= "column.type === 'TimePicker'">
@@ -190,15 +190,18 @@
 
   import DateTimeCmp from "./DateTimeCmp.vue";
   import useVuelidate from '@vuelidate/core'
-  import { required } from '@vuelidate/validators'
 
     export function
     validTitre(titre) {
-            let validTitrePattern = new RegExp("^[a-zA-Z]+(?:[-'\\s][a-zA-Z]+)*$");
-            if (validTitrePattern.test(titre)){
-                return true;
-            }
-            return false;
+      if(!titre){
+        return false
+      }
+      console.log(" je suis dans validTitre, le titre est ",titre);
+      let validTitrePattern = new RegExp("^[a-zA-Z0-9]+(?:[-'\\s][a-zA-Z0-9]*)*$");
+      if (validTitrePattern.test(titre)){
+          return true;
+      }
+      return false;
     }
 
 export default {
@@ -226,9 +229,10 @@ export default {
     return {
       addedRowContent: {
         titre :{
-          $validator: validTitre,
-          required,
-          $message: 'Titre Invalid'
+          titre_validation: {
+            $validator: validTitre,
+            $message: 'Titre Invalid'
+          }
         }
       },
     }
@@ -245,9 +249,9 @@ export default {
                   {columns: ["Titre Seance 9","2025-09-09","22:01"]},
                   {columns: ["Titre Seance 10","2025-09-10","22:01"]},
                   {columns: ["Titre Seance 11","2025-09-11","22:01"]},
-                  {columns: ["Titre Seance 12","2025-09-12s","22:01"]},
+                  {columns: ["Titre Seance 12","2025-09-12","22:01"]},
                 ],
-    this.columns = [{column:"Titre",type:"text"},{column:"Date ( aaaa/mm/jj )",type:"TimePicker"},{column:"Heure",type:null},{column:"Actions",type:null}];
+    this.columns = [{column:"Titre",type:"text"},{column:"Date : aaaa/mm/jj ",type:"TimePicker"},{column:"Heure",type:null},{column:"Actions",type:null}];
     this.titreTableau = "Séances" ;
     console.log(" Mounted ");
   },
@@ -324,7 +328,6 @@ export default {
       // console.log(NewDate);
       let NewTime = zero_hour+this.editedDate.hour+':'+zero_minute+this.editedDate.minute
       // console.log(NewTime);
-
       let NewRow =  [this.addedRowContent.titre,NewDate,NewTime]
       // this.addedRowContent.push(NewDate);
       // this.addedRowContent.push(NewTime);
@@ -335,11 +338,13 @@ export default {
       ////////////////////////////////////////////////////
       //////////////////////////////////////////////////
       ////////////////////////////////////////// 
-      
-      // this.addedRowContent = ["test"];
+
+      // Initialize the input message error
       this.v$.$validate();
-      console.log(this.v$);
-      if(this.v$){
+      console.log("Input error : ",this.v$.addedRowContent.$error);
+      console.log(" : ",this.v$.addedRowContent.$error);
+
+      if(this.v$.addedRowContent.$error){
         return
       }
 
@@ -644,5 +649,9 @@ table.table .avatar {
   margin-top: 0;
 }
 /* ---------------------------------------------- */
+
+div.input-errors {
+  color: red;
+}
 
 </style>
