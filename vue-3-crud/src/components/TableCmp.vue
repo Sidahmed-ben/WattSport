@@ -132,7 +132,10 @@
             <div v-for="(column,index) in columns"  class="form-group" :key="index">
               <div v-if ="column.type !== null && column.type !== 'TimePicker'">
                 <label >{{ column.column }}</label>
-                <input  type={{column.type}} class="form-control" v-model="selectedRowContent[index]" required />
+                <input  type={{column.type}} class="form-control" v-model="selectedRowContent.titre" required />
+                <div class="input-errors" v-if="v$.selectedRowContent.$errors.length > 0" :key="index">
+                  <div class="error-msg">{{ v$.selectedRowContent.$errors[0].$message }}</div>
+                </div>
               </div>
               <div v-if= "column.type === 'TimePicker'">
                 <label >{{ column.column }}</label>
@@ -196,6 +199,9 @@
       if(!titre){
         return false
       }
+      if(titre.length > 40){
+        return false
+      }
       console.log(" je suis dans validTitre, le titre est ",titre);
       let validTitrePattern = new RegExp("^[a-zA-Z0-9]+(?:[-'\\s][a-zA-Z0-9]*)*$");
       if (validTitrePattern.test(titre)){
@@ -219,8 +225,8 @@ export default {
       addEmployeeModal: false,
       deleteEmployeeModal: false,
       selectedRow : null,
-      selectedRowContent: [],
-      addedRowContent : {titre: null},
+      selectedRowContent: {titre: null, date:null, heure: null},
+      addedRowContent :   {titre: null},
       defaultTime : null,
       editedDate : null
     };
@@ -235,6 +241,16 @@ export default {
           }
         }
       },
+      selectedRowContent :{
+        titre :{
+          titre_validation: {
+            $validator: validTitre,
+            $message: 'Titre Invalid'
+          }
+        }
+      }
+
+
     }
   },    
   mounted() {
@@ -259,26 +275,38 @@ export default {
   methods:{
     editEmployeeModalFunc(index){
       this.selectedRow = index;
-      this.selectedRowContent = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+      let selectedRowContentArray   = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+      this.selectedRowContent.titre = selectedRowContentArray[0];
+      this.selectedRowContent.date  = selectedRowContentArray[1];
+      this.selectedRowContent.heure = selectedRowContentArray[2]
       // Set the default date in the edited frame and send it as prop
       // Concatenate the date and the time 
       // Delete additional spaces
-      this.defaultTime = this.without_spaces(this.selectedRowContent[1]+'T'+this.selectedRowContent[2]);
+      this.defaultTime = this.without_spaces(this.selectedRowContent.date+'T'+this.selectedRowContent.heure);
       this.editEmployeeModal = true;
     },
     editEmployeeModalFuncSave(){
       let avantModification  = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
-      let apresModification = JSON.parse(JSON.stringify(this.selectedRowContent));
-      // console.log("Nomalize",(apresModification))
+      let apresModification  = JSON.parse(JSON.stringify(this.selectedRowContent));
+      console.log("Nomalize",(apresModification))
+
+      this.v$.$validate();
+      console.log("Input error : ",this.v$.selectedRowContent.$error);
+      console.log(" : ",this.v$.selectedRowContent.$error);
+
+      if(this.v$.selectedRowContent.$error){
+        return
+      }
+
       // Update date 
       this.saveNewDate();
       // Update texts
       for( let i = 0 ; i < avantModification.length ; i++){
-        if(this.normalize_spaces(avantModification[i]) !== this.normalize_spaces(apresModification[i])){
+        if(this.normalize_spaces(avantModification[i]) !== this.normalize_spaces(Object.values(apresModification)[i])){
           console.log("Modified")
           console.log(apresModification);
           // Ajouter l'élément modifiè dans le tableau 
-          this.items.splice(this.selectedRow, 1,{columns : apresModification});
+          this.items.splice(this.selectedRow, 1,{columns : Object.values(apresModification)});
           this.editEmployeeModal = false;
           return
         }
