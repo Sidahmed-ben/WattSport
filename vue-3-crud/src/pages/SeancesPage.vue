@@ -42,7 +42,7 @@
     <br />
     <br />
     <br />
-    <TableCmp @clicked="onClickChild"></TableCmp>
+    <TableSeanceCoachCmp @clicked="onClickChild"></TableSeanceCoachCmp>
     <br />
     <br />
     <br />
@@ -52,13 +52,13 @@
 <script>
 
 import UsersDataService from "@/services/UsersDataService";
-import TableCmp from "../components/TableCmp.vue";
+import TableSeanceCoachCmp from "../components/TableSeanceCoachCmp.vue";
 
 
 export default {
 
   name: "SeancesPage",
-  components: { TableCmp },
+  components: { TableSeanceCoachCmp },
   props: [],
   data() {
     return {
