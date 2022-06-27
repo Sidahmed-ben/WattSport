@@ -75,7 +75,7 @@ createUser = async (req,res) =>{
 }
 
 
-// Called by passport when login Post is triggered
+// the first function Called by passport when login Post is triggered
 authenticateUser = (req,email, password, done) => {
     console.log(req.body.user,email, password);
     let table;
@@ -106,6 +106,7 @@ authenticateUser = (req,email, password, done) => {
             if (isMatch) {
               console.log(" User found ");
               user.type = req.body.user;
+              // This user will sent to the client.
               return done(null, user);
             } else {
               //password is incorrect

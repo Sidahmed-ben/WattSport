@@ -6,7 +6,7 @@ const session = require("express-session");
 require("dotenv").config();
 const app = express();
 const cors = require('cors');
-const PORT = 8081;
+const PORT = 8082;
 
 // Corse configuration.
 var corsOptions = {

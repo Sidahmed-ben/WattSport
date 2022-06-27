@@ -1,6 +1,8 @@
 import http from "./backendConnection/http-common";
 
 class UsersDataService {
+
+  //  Cette partie concerne les deux utilisateurs (User,Coach)
   registerUser(data) {
     return http.post("/users/register", data);
   }
@@ -12,24 +14,20 @@ class UsersDataService {
   checkUserHomeAutho() {
     return http.get("/users/dashboard");
   }
-
-
   logoutUser(){
     return http.get('/users/logout');
   }
 
-  // authenticate(){
-  //   return http.get()
-  // }
-//   get(id) {
-//     return http.get(`/tutorials/${id}`);
-//   }
-//   create(data) {
-//     return http.post("/tutorials", data);
-//   }
-//   deleteAll() {
-//     return http.delete(`/tutorials`);
-//   }
+  // Cette partie concerne le Coach
+  getCoachSessionList(){
+    return http.get('/coach/senaces');
+  }
+  
+
+
+
+
+  // Cette partie concerne le User
 }
 
 

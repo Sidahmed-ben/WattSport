@@ -37,7 +37,7 @@
                                     </div>
                                     <!-- Email -->
                                     <div class="form-group mb-3">
-                                        <input id="inputEmail" type="email" placeholder="Email address" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.email">
+                                        <input id="inputEmail"  placeholder="Email address" required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" v-model="form.email">
                                     </div>
                                     <!-- Handle Email error -->
                                     <div class="input-errors" v-if="v$.form.email.$errors.length > 0" :key="index">
@@ -121,8 +121,19 @@
                 UsersDataService.loginUser(data)
                     .then((result) => {
                       console.log(" Users loged succeffuly");
-                      console.log(result);
-                      this.$router.push('/user');
+                      console.log(result.data);
+                      switch(result.data.type){
+                        case 'isEntrain' :
+                            this.$router.push('/coach/profil');
+                            break;
+                        case 'isCoach' :
+                            this.$router.push('/user/profil');
+                            break;
+                        default :
+                            console.log("ERROR : Unknown User type ");
+                            break;
+                      }
+                      
                     })
                     .catch(e => {
                         this.servErrors = [];

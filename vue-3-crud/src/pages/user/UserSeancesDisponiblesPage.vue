@@ -1,18 +1,24 @@
 <template>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round"
+  />
   <link
     rel="stylesheet"
     href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
   />
-  
+
   <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-  /> 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  />
 
   <!--header area start-->
-  <header :class="{ disable: disable  }">
+  <header :class="{ disable: disable }">
     <div class="left_area">
       <h3>Watt Sport</h3>
     </div>
@@ -22,27 +28,30 @@
   </header>
   <!--header area end-->
   <!--sidebar start-->
-  <div class="sidebar"  :class="{ disable: disable  }">
+  <div class="sidebar" :class="{ disable: disable }">
     <center>
-      <img src="../../public/home.png" class="profile_image" alt />
+      <img src="../../../public/home.png" class="profile_image" alt />
       <h4>{{ "User name" }}</h4>
     </center>
-    <router-link to="/coach/profil" class="nav-link">
+    <router-link to="/user/profil" class="nav-link">
       <span>Profil</span>
     </router-link>
-    <router-link to="" class="nav-link">
-      <span>Séances</span>
+    <router-link to class="nav-link">
+      <span>Séances disponibles </span>
+    </router-link>
+    <router-link to="/user/seances_valides" class="nav-link">
+      <span>Sèances validèes</span>
     </router-link>
   </div>
   <!--sidebar end-->
   <!--content start-->
-  <div class="content"  :class="{ disable: disable  }">
+  <div class="content" :class="{ disable: disable }">
     <br />
     <br />
     <br />
     <br />
     <br />
-    <TableSeanceCoachCmp @clicked="onClickChild"></TableSeanceCoachCmp>
+    <TableSeanceUserCmp :titreTableau='"List des séances desponibles"'></TableSeanceUserCmp>
     <br />
     <br />
     <br />
@@ -50,23 +59,20 @@
 </template>
 
 <script>
-
 import UsersDataService from "@/services/UsersDataService";
-import TableSeanceCoachCmp from "../components/TableSeanceCoachCmp.vue";
-
+import TableSeanceUserCmp from "../../components/TableSeanceUserCmp.vue";
 
 export default {
-
   name: "SeancesPage",
-  components: { TableSeanceCoachCmp },
+  components: { TableSeanceUserCmp },
   props: [],
   data() {
     return {
       disable: false,
-      editEmployeeModal : false,
-      addEmployeeModal : false,
-      deleteEmployeeModal : false
-    }
+      editEmployeeModal: false,
+      addEmployeeModal: false,
+      deleteEmployeeModal: false,
+    };
   },
   methods: {
     userLogout() {
@@ -82,11 +88,10 @@ export default {
           this.servErrors.push({ error: e.response.data });
         });
     },
-    onClickChild(disable){
+    onClickChild(disable) {
       console.log("onclick");
-      this.disable = disable
-    }
-
+      this.disable = disable;
+    },
   },
 };
 </script>
@@ -234,7 +239,7 @@ header {
 
 .content {
   margin-left: 250px;
-  background: url("../../public/5.jpg") no-repeat;
+  background: url("../../../public/5.jpg") no-repeat;
   background-position: center;
   background-size: cover;
   height: 100vh;
@@ -243,8 +248,7 @@ header {
 }
 /* ---------------------------------------------- */
 
-.disable{
+.disable {
   pointer-events: none;
 }
-
 </style>

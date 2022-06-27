@@ -6,11 +6,9 @@ let createUser = require('../controllers/userController').createUser;
 
 
 module.exports.initUserRoutes = (passport) => {   
+      /** GET calls */
       /** Get user Dashboard */  
       router.get("/users/dashboard", utils.checkAuthenticated);
-      router.get("/users/coach/dashboard", utils.checkAuthenticated);
-
-    
       router.get('/users/logout', function(req, res) {
         req.logout(function(err) {
           if (err) { 
@@ -20,10 +18,14 @@ module.exports.initUserRoutes = (passport) => {
           }
         });
       });   
-      
+
+
+
+
+
+      /** POST calls */
       /** Post user Registration */  
       router.post('/users/register' , createUser);
-      
       /** Post user Login */  
       router.post(
         "/users/login",
@@ -38,16 +40,13 @@ module.exports.initUserRoutes = (passport) => {
                   // if user authenticated maintain the session
                   req.logIn(user, function() {
                       // do whatever here on successful login
+                      console.log( " Test post login ",user)
                       res.status(200).send(user);
                   })
               }    
           })(req, res, next);
       }
-    );
-
-
-
-    
+    );    
     
 }
 

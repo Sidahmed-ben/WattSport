@@ -1,9 +1,11 @@
 import { createWebHistory, createRouter } from "vue-router";
 import HomePage from "../pages/HomePage";
 import RegisterPage from "../pages/RegisterPage";
-// import UserHomePage from "../pages/UserHomePage";
-import CoachHomePage from "../pages/CoachHomePage";
-import SeancesPage from "../pages/SeancesPage";
+import CoachHomePage from "../pages/coach/CoachHomePage";
+import CoachSeancesPage from "../pages/coach/CoachSeancesPage";
+import UserHomePage from "../pages/user/UserHomePage";
+import UserSeancesDisponiblesPage from "../pages/user/UserSeancesDisponiblesPage";
+import UserSeancesValidesPage from "../pages/user/UserSeancesValidesPage";
 import UsersDataService from "../services/UsersDataService";
 
 
@@ -26,32 +28,56 @@ const routes =  [
   //   path: "/coach",
   //   name: "UserHomePage",
   //   component: UserHomePage,
-  //   meta: {
-  //     userMustAuth: true
-  //   }
+  //   // meta: {
+  //   //   userMustAuth: true
+  //   // }
   // },
+
+
+  // Coach  
   {
     path: "/coach/profil",
     name: "CoachHomePage",
     component: CoachHomePage,
-    props: true
+    props: true,
+    // meta: {
+    //   userMustAuth: true
+    // }
 
   },
   {
     path: "/coach/seances",
     name: "SeancesPage",
-    component: SeancesPage,
+    component: CoachSeancesPage,
     props: true
 
   },
+  // User  
+  {
+    path: "/user/profil",
+    name: "UserHomePage",
+    component: UserHomePage,
+    props: true
 
+  },
+  {
+    path: "/user/seances_disponibles",
+    name: "UserSeancesDisponiblesPage",
+    component: UserSeancesDisponiblesPage,
+    props: true
+  },
+  {
+    path: "/user/seances_valides",
+    name: "UserSeancesPage",
+    component: UserSeancesValidesPage,
+    props: true
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
-
 
 
 // let isAuthenticated = false;

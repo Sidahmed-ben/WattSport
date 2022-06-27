@@ -215,6 +215,7 @@
 import DateTimeCmp from "./DateTimeCmp.vue";
 import useVuelidate from '@vuelidate/core'
 import ListUsersByLesson from "./ListUsersByLesson.vue";
+import UsersDataService from "@/services/UsersDataService";
 
 export function
   validTitre(titre) {
@@ -277,7 +278,19 @@ export default {
     }
   },
   mounted() {
-    this.items = [{ columns: ["Titre Seance 1", "2025-09-01", "22:01"] },
+    UsersDataService.getCoachSessionList()
+      .then((result) => {
+        console.log(" Coach lessons Fetched Successfuly ")
+        console.log(result.data);
+      })
+      .catch((e) =>{
+        console.log(" Erro in coach lessons Fetching ")
+        console.log(e)
+      });
+
+
+    this.items = [
+    { columns: ["Titre Seance 1", "2025-09-01", "22:01"] },
     { columns: ["Titre Seance 2", "2025-09-02", "22:01"] },
     { columns: ["Titre Seance 3", "2025-09-03", "22:01"] },
     { columns: ["Titre Seance 4", "2025-09-04", "22:01"] },

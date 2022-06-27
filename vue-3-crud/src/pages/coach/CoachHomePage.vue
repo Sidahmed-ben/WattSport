@@ -16,8 +16,8 @@
   <div class="sidebar">
     <center>
 
-      <img src="../../public/home.png" class="profile_image" alt="">
-      <h4>{{"User name"}}</h4>
+      <img src="../../../public/home.png" class="profile_image" alt="">
+      <h4>{{"Coach name"}}</h4>
 
     </center>
 
@@ -79,8 +79,7 @@
         </div>
     </div>
 
-
-
+    
     <br><br><br>
   </div>
 
@@ -302,7 +301,7 @@
 
     .content {
       margin-left: 250px;
-      background: url("../../public/5.jpg") no-repeat;
+      background: url("../../../public/5.jpg") no-repeat;
       background-position: center;
       background-size: cover;
       height: 100vh;

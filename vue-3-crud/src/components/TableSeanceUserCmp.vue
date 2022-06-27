@@ -35,8 +35,7 @@
               <td v-for="(column,index2) in item.columns" :key="index2">{{ column }}</td>
               <td>
                 <div>
-                  <button type="button" class="btn btn-outline-success Valider">Valider</button>
-                  <button type="button" class="btn btn-outline-danger Supprimer">Supprimer</button>
+                  <button type="button" class="btn btn-primary">s'inscrire</button>
                 </div>
               </td>
             </tr>
@@ -55,36 +54,34 @@
 
 
 export default {
-  name: "ListUsersByLesson",
+  name: "TableSeanceUserCmp.vue",
   components: {  },
-  props: [],
+  props: ["titreTableau"],
   data() {
     return {
       items: [],
       columns: [],
-      titreTableau: "",
+      // titreTableau: "",
       selectedRow: null,
       selectedRowContent: { titre: null, date: null, heure: null },
     };
   },
   mounted() {
-    this.items = 
-    [
-      { columns: [" Utilisateur 1"] },
-      { columns: [" Utilisateur 2"] },
-      { columns: [" Utilisateur 3"] },
-      { columns: [" Utilisateur 4"] },
-      { columns: [" Utilisateur 5"] },
-      { columns: [" Utilisateur 6"] },
-      { columns: [" Utilisateur 7"] },
-      { columns: [" Utilisateur 8"] },
-      { columns: [" Utilisateur 9"] },
-      { columns: [" Utilisateur 10"] },
-      { columns: [" Utilisateur 11"] },
-      { columns: [" Utilisateur 12"] },
+    this.items = [
+      { columns: ["Titre Seance 1", "2025-09-01", "22:01"] },
+      { columns: ["Titre Seance 2", "2025-09-02", "22:01"] },
+      { columns: ["Titre Seance 3", "2025-09-03", "22:01"] },
+      { columns: ["Titre Seance 4", "2025-09-04", "22:01"] },
+      { columns: ["Titre Seance 5", "2025-09-05", "22:01"] },
+      { columns: ["Titre Seance 6", "2025-09-06", "22:01"] },
+      { columns: ["Titre Seance 7", "2025-09-07", "22:01"] },
+      { columns: ["Titre Seance 8", "2025-09-08", "22:01"] },
+      { columns: ["Titre Seance 9", "2025-09-09", "22:01"] },
+      { columns: ["Titre Seance 10", "2025-09-10", "22:01"] },
+      { columns: ["Titre Seance 11", "2025-09-11", "22:01"] },
+      { columns: ["Titre Seance 12", "2025-09-12", "22:01"] },
     ],
-    this.columns = [{ column: "Titre", type: "text" }, { column: "Actions", type: null }];
-    this.titreTableau = "List des utilisateurs ";
+    this.columns = [{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }, { column: "Actions", type: null }];
     console.log(" Mounted ");
   },
 
@@ -114,11 +111,11 @@ div.div-cont-xl {
   background: #fff;
   padding: 20px 25px;
   border-radius: 3px;
-  min-width: 700px;
+  min-width: 200px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
   overflow: auto;
   height: 700px;
-  width: 700px;
+  width: 1000px;
   margin: auto;
 }
 .table-title {
@@ -168,7 +165,8 @@ table.table tr th:first-child {
   width: auto;
 }
 table.table tr th:last-child {
-  width: 230px;
+  width: 180px;
+  padding-left: 40px;
 }
 
 table.table-striped tbody button {
