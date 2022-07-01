@@ -6,7 +6,7 @@ class UsersDataService {
   registerUser(data) {
     return http.post("/users/register", data);
   }
-
+  
   loginUser(data) {
     return http.post("/users/login",data);
   }
@@ -20,7 +20,7 @@ class UsersDataService {
 
   // Cette partie concerne le Coach
   getCoachSessionList(){
-    return http.get('/coach/senaces');
+    return http.get('/users/coach/seances');
   }
   
 

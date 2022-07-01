@@ -6,6 +6,8 @@ let createUser = require('../controllers/userController').createUser;
 
 
 module.exports.initUserRoutes = (passport) => {   
+
+      /** Calls for both Coach and User */
       /** GET calls */
       /** Get user Dashboard */  
       router.get("/users/dashboard", utils.checkAuthenticated);
@@ -18,11 +20,6 @@ module.exports.initUserRoutes = (passport) => {
           }
         });
       });   
-
-
-
-
-
       /** POST calls */
       /** Post user Registration */  
       router.post('/users/register' , createUser);
@@ -48,6 +45,15 @@ module.exports.initUserRoutes = (passport) => {
       }
     );    
     
+
+
+    /** Calls for Coach */  
+    /** Get call */  
+    router.get('/users/coach/seances' , getCoachSessionList);
+
+    
+
+
 }
 
 

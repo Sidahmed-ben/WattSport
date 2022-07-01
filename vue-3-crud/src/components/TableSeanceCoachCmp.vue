@@ -282,28 +282,41 @@ export default {
       .then((result) => {
         console.log(" Coach lessons Fetched Successfuly ")
         console.log(result.data);
+        let sessionDate;
+        let item;
+        // Session Data 
+        let formatedDate;
+        let formatedTime;
+        let sessionTitle;
+        let sessionId;
+        // Itérate the array that contains session data
+        result.data.forEach(session => {
+          console.log(session.session_date);
+          sessionDate = session.session_date;
+          // Session date
+          formatedDate = this.extractDateFromQuery(sessionDate);
+          console.log(" Formated date ",formatedDate);
+          // Session time
+          formatedTime = this.extractTimeFromQuery(sessionDate);
+          console.log("formatedTime " ,formatedTime);
+          // Session title
+          sessionTitle = session.title;
+          console.log(sessionTitle);
+          // Session id
+          sessionId = session.session_id;
+          console.log(sessionId);
+
+          item = { columns: [sessionTitle,formatedDate, formatedTime]};
+          this.items.push(item);  
+        });
       })
       .catch((e) =>{
         console.log(" Erro in coach lessons Fetching ")
         console.log(e)
       });
+      
 
-
-    this.items = [
-    { columns: ["Titre Seance 1", "2025-09-01", "22:01"] },
-    { columns: ["Titre Seance 2", "2025-09-02", "22:01"] },
-    { columns: ["Titre Seance 3", "2025-09-03", "22:01"] },
-    { columns: ["Titre Seance 4", "2025-09-04", "22:01"] },
-    { columns: ["Titre Seance 5", "2025-09-05", "22:01"] },
-    { columns: ["Titre Seance 6", "2025-09-06", "22:01"] },
-    { columns: ["Titre Seance 7", "2025-09-07", "22:01"] },
-    { columns: ["Titre Seance 8", "2025-09-08", "22:01"] },
-    { columns: ["Titre Seance 9", "2025-09-09", "22:01"] },
-    { columns: ["Titre Seance 10", "2025-09-10", "22:01"] },
-    { columns: ["Titre Seance 11", "2025-09-11", "22:01"] },
-    { columns: ["Titre Seance 12", "2025-09-12", "22:01"] },
-    ],
-      this.columns = [{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }, { column: "Actions", type: null }];
+    this.columns = [{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }, { column: "Actions", type: null }];
     this.titreTableau = "Séances";
     console.log(" Mounted ");
   },
@@ -455,7 +468,31 @@ export default {
     },
     hideListEvent(){
       this.listUsers = false;
+    },
+    extractDateFromQuery(query){
+          // Extraction de la date
+          let formated_date = query.match("[0-9]{4}([-/.])[0-9]{2}[-/.][0-9]{2}");
+          if(formated_date != null) {
+            let dateSplitted = formated_date[0];
+            return dateSplitted;
+          }else{
+            console.log( "EXTRACTED DATE FORMAT FROM POSTGRESQL ERROR (REGEX ERROR)");
+            return null;
+          }
+    },
+    extractTimeFromQuery(query){
+          // Extraction de la date
+          let formated_time = query.match("[0-9]{2}[:][0-9]{2}");
+          if(formated_time != null) {
+            let timeSplitted = formated_time[0];
+            return timeSplitted;
+          }else{
+            console.log( "EXTRACTED TIME FORMAT FROM POSTGRESQL ERROR (REGEX ERROR)");
+            return null;
+          }
     }
+    
+
   }
 };
 </script>

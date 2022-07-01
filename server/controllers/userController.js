@@ -127,5 +127,22 @@ authenticateUser = (req,email, password, done) => {
 };
 
 
+getCoachSessionList = (req ,res ) => {
+  /** Get date as varchar to ignore timzone problems */
+  pool.query(
+    `SELECT session_date::varchar,title,session_id FROM session ORDER BY session_date ASC`, 
+    [] , 
+    (err,result) => {
+        if(err){
+            // Error when sending db request
+            return res.status(500).send({message : `ERROR IN FETCHING COACH SESSION LIST `})
+        }
+        const sessionCoachList = result.rows
+        return res.status(200).send(sessionCoachList);
+        }
+    )
+  
+}
+
 module.exports.createUser = createUser;
 module.exports.authenticateUser = authenticateUser;
