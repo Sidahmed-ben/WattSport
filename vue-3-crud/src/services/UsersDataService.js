@@ -22,6 +22,10 @@ class UsersDataService {
   getCoachSessionList(){
     return http.get('/users/coach/seances');
   }
+
+  deleteCoachSessionId(deletedSessionId){
+    return http.delete('/users/coach/seances/deleteId',deletedSessionId)
+  }
   
 
 

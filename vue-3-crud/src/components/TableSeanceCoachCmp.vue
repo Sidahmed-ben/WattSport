@@ -37,7 +37,12 @@
           <!-- </div> -->
           <tbody>
             <tr v-for="(item,index1) in items" :key="index1">
-              <td v-for="(column,index2) in item.columns" :key="index2">{{ column }}</td>
+              <td v-for="(column,index2) in item.columns" :key="index2">
+                <!-- To not display the Id (The index 0 is the Id)-->
+                <!-- <span v-if ="index2 != 0"> -->
+                  {{ column }}
+                <!-- </span> -->
+              </td>
               <td>
                 <div>
                   <a
@@ -306,7 +311,7 @@ export default {
           sessionId = session.session_id;
           console.log(sessionId);
 
-          item = { columns: [sessionTitle,formatedDate, formatedTime]};
+          item = { columns: [sessionId,sessionTitle,formatedDate, formatedTime]};
           this.items.push(item);  
         });
       })
@@ -314,9 +319,8 @@ export default {
         console.log(" Erro in coach lessons Fetching ")
         console.log(e)
       });
-      
 
-    this.columns = [{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }, { column: "Actions", type: null }];
+    this.columns = [{ column: "Id", type: "text" },{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }, { column: "Actions", type: null }];
     this.titreTableau = "Séances";
     console.log(" Mounted ");
   },
@@ -366,8 +370,23 @@ export default {
     },
     deleteEmployeeModalFunc() {
       let index = this.selectedRow
-      console.log("selectedRow : ", this.items[index]);
-      this.items.splice(index, 1);
+      console.log("selectedRow : ", this.reactiveVarDecomp(this.items[index]));
+      let deletedRow = this.reactiveVarDecomp(this.items[index]);
+      let deletedSessionId =  deletedRow.columns[0];
+      console.log( " Deleted Id = ", deletedSessionId);
+
+
+      UsersDataService.deleteCoachSessionId(deletedSessionId)
+        .then((result) => {
+          console.log(result)
+          this.$router.push("/coach/seances");
+        })
+        .catch((e) =>{
+          console.log(" ERROR IN DELETING SESSION ");
+          console.log(e)
+        });
+
+      // this.items.splice(index, 1);
       this.deleteEmployeeModal = false;
     },
     normalize_spaces(str) {
@@ -490,6 +509,9 @@ export default {
             console.log( "EXTRACTED TIME FORMAT FROM POSTGRESQL ERROR (REGEX ERROR)");
             return null;
           }
+    },
+    reactiveVarDecomp(react){
+      return JSON.parse(JSON.stringify(react));
     }
     
 

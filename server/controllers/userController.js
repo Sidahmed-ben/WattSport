@@ -144,5 +144,15 @@ getCoachSessionList = (req ,res ) => {
   
 }
 
+deleteCoachSessionId = (req ,res ) => {
+  return res.status(200).send({message : ` Test Delete Worked Successfully `})
+}
+
+
 module.exports.createUser = createUser;
+module.exports.getCoachSessionList = getCoachSessionList;
+module.exports.deleteCoachSessionId = deleteCoachSessionId;
 module.exports.authenticateUser = authenticateUser;
+
+
+

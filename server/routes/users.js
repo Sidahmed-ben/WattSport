@@ -2,7 +2,7 @@ var express = require('express');
 const  router = express.Router();
 const utils = require("./utils");
 
-let createUser = require('../controllers/userController').createUser;
+let userController = require('../controllers/userController');
 
 
 module.exports.initUserRoutes = (passport) => {   
@@ -22,7 +22,7 @@ module.exports.initUserRoutes = (passport) => {
       });   
       /** POST calls */
       /** Post user Registration */  
-      router.post('/users/register' , createUser);
+      router.post('/users/register' , userController.createUser);
       /** Post user Login */  
       router.post(
         "/users/login",
@@ -49,7 +49,8 @@ module.exports.initUserRoutes = (passport) => {
 
     /** Calls for Coach */  
     /** Get call */  
-    router.get('/users/coach/seances' , getCoachSessionList);
+    router.get('/users/coach/seances' , userController.getCoachSessionList);
+    router.delete('/users/coach/seances/deleteId',userController.deleteCoachSessionId)
 
     
 
