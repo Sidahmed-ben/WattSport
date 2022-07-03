@@ -17,7 +17,7 @@
             </div>
             <div class="col-sm-6">
               <button
-                @click="disableArea(); addEmployeeModal = true"
+                @click="disableArea(); addEmployeeModal = true;sessionAlreadyExistsError = false"
                 class="btn btn-success"
                 data-toggle="modal"
               >
@@ -108,7 +108,11 @@
                 <DateTimeCmp :defaultTime="defaultTime" @DateUpdated="DateUpdated"></DateTimeCmp>
               </div>
             </div>
+            <div class="input-errors"  v-if="sessionAlreadyExistsError" >
+              <div class="error-msg"> Une séance avec la même date existe déja </div>
+            </div>
           </div>
+
           <div class="modal-footer">
             <button
               @click="enableArea(); addEmployeeModal = false"
@@ -227,11 +231,11 @@ export function
   if (!titre) {
     return false
   }
-  if (titre.length > 40) {
+  if (titre.length > 40 || titre.length == 0) {
     return false
   }
   console.log(" je suis dans validTitre, le titre est ", titre);
-  let validTitrePattern = new RegExp("^[a-zA-Z0-9]+(?:[-'\\s][a-zA-Z0-9]*)*$");
+  let validTitrePattern = new RegExp("^[a-zA-Z0-9À-ÿ\\s]+(?:[-'\\s][a-zA-Z0-9]*)*$");
   if (validTitrePattern.test(titre)) {
     return true;
   }
@@ -245,6 +249,7 @@ export default {
   data() {
     return {
       v$: useVuelidate(),
+      sessionAlreadyExistsError: false,
       isDesactive: false,
       listUsers: false,
       items: [],
@@ -311,7 +316,7 @@ export default {
           sessionId = session.session_id;
           console.log(sessionId);
 
-          item = { columns: [sessionId,sessionTitle,formatedDate, formatedTime]};
+          item = { columns: {id:sessionId,title:sessionTitle,date:formatedDate,time:formatedTime}};
           this.items.push(item);  
         });
       })
@@ -320,7 +325,7 @@ export default {
         console.log(e)
       });
 
-    this.columns = [{ column: "Id", type: "text" },{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }, { column: "Actions", type: null }];
+    this.columns = [{ column: "Id", type: null },{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }, { column: "Actions", type: null }];
     this.titreTableau = "Séances";
     console.log(" Mounted ");
   },
@@ -329,9 +334,9 @@ export default {
     editEmployeeModalFunc(index) {
       this.selectedRow = index;
       let selectedRowContentArray = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
-      this.selectedRowContent.titre = selectedRowContentArray[0];
-      this.selectedRowContent.date = selectedRowContentArray[1];
-      this.selectedRowContent.heure = selectedRowContentArray[2]
+      this.selectedRowContent.titre  = selectedRowContentArray.title;
+      this.selectedRowContent.date   = selectedRowContentArray.date;
+      this.selectedRowContent.heure  = selectedRowContentArray.time;
       // Set the default date in the edited frame and send it as prop
       // Concatenate the date and the time 
       // Delete additional spaces
@@ -350,16 +355,15 @@ export default {
       if (this.v$.selectedRowContent.$error) {
         return
       }
-
       // Update date 
       this.saveNewDate();
       // Update texts
-      for (let i = 0; i < avantModification.length; i++) {
-        if (this.normalize_spaces(avantModification[i]) !== this.normalize_spaces(Object.values(apresModification)[i])) {
-          console.log("Modified")
+      // For this array we have only Title that can be modifies as text
+      for (let i = 1; i < Object.values(avantModification).length; i++) {
+        if (this.normalize_spaces(Object.values(avantModification)[i]) !== this.normalize_spaces(Object.values(apresModification)[i])) {
+          console.log("Modified");
           console.log(apresModification);
-          // Ajouter l'élément modifiè dans le tableau 
-          this.items.splice(this.selectedRow, 1, { columns: Object.values(apresModification) });
+          this.items[this.selectedRow].columns.title = apresModification.titre
           this.editEmployeeModal = false;
           return
         }
@@ -368,18 +372,23 @@ export default {
       this.editEmployeeModal = false;
 
     },
+    
     deleteEmployeeModalFunc() {
       let index = this.selectedRow
       console.log("selectedRow : ", this.reactiveVarDecomp(this.items[index]));
       let deletedRow = this.reactiveVarDecomp(this.items[index]);
-      let deletedSessionId =  deletedRow.columns[0];
+      let deletedSessionId =  deletedRow.columns.id;
       console.log( " Deleted Id = ", deletedSessionId);
-
-
-      UsersDataService.deleteCoachSessionId(deletedSessionId)
+      let data = {
+        deletedSessionId
+      };
+      console.log(" la data envoyé ", data);
+      UsersDataService.deleteCoachSessionId(data)
         .then((result) => {
           console.log(result)
-          this.$router.push("/coach/seances");
+          // this.mounted();
+          location.reload();
+          // this.$router.push("/coach/seances");
         })
         .catch((e) =>{
           console.log(" ERROR IN DELETING SESSION ");
@@ -403,6 +412,7 @@ export default {
       this.$emit('clicked', false)
     },
     addEmployeeModalFunc() {
+      
       let zero_month = ''
       let zero_day = ''
       let zero_hour = ''
@@ -424,7 +434,9 @@ export default {
       // console.log(NewDate);
       let NewTime = zero_hour + this.editedDate.hour + ':' + zero_minute + this.editedDate.minute
       // console.log(NewTime);
-      let NewRow = [this.addedRowContent.titre, NewDate, NewTime]
+      let NewRow = {title : this.addedRowContent.titre,
+                    date  : NewDate,
+                    time  : NewTime};
       // this.addedRowContent.push(NewDate);
       // this.addedRowContent.push(NewTime);
       console.log(NewRow);
@@ -444,15 +456,34 @@ export default {
         return
       }
 
-      this.items.unshift({ columns: NewRow });
-      this.addedRowContent = [{ title: null }];
-      this.enableArea();
-      this.addEmployeeModal = false;
+      // Send Post request to the serever to add the new session
+      UsersDataService.addCoachSession(NewRow)
+        .then((result) => {
+          console.log(result);
+          console.log(" SESSION ADDED SUCCESSFFULY ");
+          this.addedRowContent = [{ title: null }];
+          this.enableArea();
+          this.addEmployeeModal = false;
+          location.reload();
+        })
+        .catch((e) =>{
+          console.log(e)
+          if(e.response.status === 409){
+            this.sessionAlreadyExistsError = true;
+            console.log(" SESSION WITH THE SAME DATE ALREADY EXISTS");
+            return
+          }
+          console.log(" ERROR IN ADDING COACH SESSION ");
+          return
+        });
+
     },
+
     DateUpdated(time) {
       this.editedDate = time;
       console.log('I am the table the time is ', this.editedDate);
     },
+
     saveNewDate() {
       let zero_month = ''
       let zero_day = ''
@@ -473,14 +504,18 @@ export default {
       }
 
       let NewDate = this.editedDate.year + '-' + zero_month + this.editedDate.month + '-' + zero_day + this.editedDate.day
-      console.log(NewDate);
+      console.log("New date :",NewDate);
       let NewTime = zero_hour + this.editedDate.hour + ':' + zero_minute + this.editedDate.minute
-      console.log(NewTime);
+      console.log("New time :",NewTime);
 
-      if (this.items[this.selectedRow].columns[1] != NewDate || this.items[this.selectedRow].columns[2] != NewTime) {
+
+      if (this.items[this.selectedRow].columns.date != NewDate || this.items[this.selectedRow].columns.time != NewTime) {
         console.log(" The date was edited by the user ");
-        this.items[this.selectedRow].columns[1] = NewDate;
-        this.items[this.selectedRow].columns[2] = NewTime;
+        this.items[this.selectedRow].columns.date = NewDate
+        console.log(this.items[this.selectedRow].columns.date)
+        this.items[this.selectedRow].columns.time = NewTime;
+        console.log(this.items[this.selectedRow].columns.time)
+
       } else {
         console.log(" The date was NOT edited by the user ");
       }

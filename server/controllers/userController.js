@@ -140,19 +140,65 @@ getCoachSessionList = (req ,res ) => {
         const sessionCoachList = result.rows
         return res.status(200).send(sessionCoachList);
         }
-    )
+  )
   
 }
 
 deleteCoachSessionId = (req ,res ) => {
-  return res.status(200).send({message : ` Test Delete Worked Successfully `})
+  console.log(req.body);
+  let deletedSessionId = req.body.deletedSessionId;
+  pool.query(
+    `DELETE FROM session WHERE session_id  = $1 RETURNING *`, 
+    [deletedSessionId] , 
+    (err,result) => {
+      if(err){
+        // Error when sending db request
+        return res.status(500).send({message : `ERROR IN DELETING SESSION WITH ID ${deletedSessionId} RETURNING *`})
+      }
+
+      if(result.rows.length == 0){
+        return res.status(500).send({message : ` SESSION WITH ID ${deletedSessionId} NOT FOUND `})
+      }
+      const deletedSession = result.rows[0];
+      return res.status(200).send({message : ` SESSION ${deletedSession.session_id} DELETED SUCCEFFULLY `});
+    }
+  )
 }
+
+
+addCoachSession = (req ,res ) => {
+  console.log(req.body);
+
+  let addedSession = req.body;
+  let dateTime = addedSession.date + " " + addedSession.time;
+  // console.log("dateTime =",dateTime);
+  console.log(`INSERT INTO session (title, session_date) VALUES('${addedSession.title}','${dateTime}') `)
+  pool.query(
+    `INSERT INTO session (title, session_date) VALUES('${addedSession.title}','${dateTime}') RETURNING *`,  
+    (err,result) => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        if(err.code === '23505'){
+          return res.status(409).send({message : ` SESSION WITH THE SAME DATE ALLREADY EXISTS `})
+        }else{
+          return res.status(500).send({message : `ERROR IN ADDING NEW SESSION`})
+        }
+      }
+      const addedSession = result.rows[0];
+      console.log(addedSession)
+      return res.status(200).send({message : ` SESSION ADDED SUCCESSFFULY WITH ID `, session_id:addedSession.session_id});
+    }
+  )
+}
+
 
 
 module.exports.createUser = createUser;
 module.exports.getCoachSessionList = getCoachSessionList;
 module.exports.deleteCoachSessionId = deleteCoachSessionId;
 module.exports.authenticateUser = authenticateUser;
+module.exports.addCoachSession = addCoachSession;
 
 
 

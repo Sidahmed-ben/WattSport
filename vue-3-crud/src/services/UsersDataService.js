@@ -24,9 +24,12 @@ class UsersDataService {
   }
 
   deleteCoachSessionId(deletedSessionId){
-    return http.delete('/users/coach/seances/deleteId',deletedSessionId)
+    return http.post('/users/coach/seances/deleteId',deletedSessionId)
   }
   
+  addCoachSession(newSession){
+    return http.post('/users/coach/seances/addSession', newSession);
+  }
 
 
 
