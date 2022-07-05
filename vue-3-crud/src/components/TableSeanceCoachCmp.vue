@@ -165,6 +165,9 @@
                 <DateTimeCmp :defaultTime="defaultTime" @DateUpdated="DateUpdated"></DateTimeCmp>
               </div>
             </div>
+            <div class="input-errors"  v-if="sessionAlreadyExistsError" >
+              <div class="error-msg"> Une séance avec la même date existe déja </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button
@@ -332,6 +335,7 @@ export default {
 
   methods: {
     editEmployeeModalFunc(index) {
+      this.sessionAlreadyExistsError = false;
       this.selectedRow = index;
       let selectedRowContentArray = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
       this.selectedRowContent.titre  = selectedRowContentArray.title;
@@ -356,21 +360,56 @@ export default {
         return
       }
       // Update date 
-      this.saveNewDate();
-      // Update texts
+      let update = false;
+      const {modifiedDate,NewDate,NewTime} = this.saveNewDate();
+      
+      if(modifiedDate){
+        update = true;
+      }
+
+      // // Update texts
       // For this array we have only Title that can be modifies as text
       for (let i = 1; i < Object.values(avantModification).length; i++) {
         if (this.normalize_spaces(Object.values(avantModification)[i]) !== this.normalize_spaces(Object.values(apresModification)[i])) {
-          console.log("Modified");
-          console.log(apresModification);
-          this.items[this.selectedRow].columns.title = apresModification.titre
-          this.editEmployeeModal = false;
-          return
+          update = true;
+          break;
         }
       }
+      
+      
+      if(update){
+        // Update the session in the database.
+        let editedSession = { id   : this.items[this.selectedRow].columns.id,
+                              title: apresModification.titre,
+                              date : NewDate,
+                              time : NewTime
+                            };
+        
+        UsersDataService.editCoachSession(editedSession)
+        .then((result) => {
+          console.log(result)
+          console.log(" SESSION UPDATED SUCCESSFFULY");
+          this.editEmployeeModal = false;
+          location.reload();
+        })
+        .catch((e) =>{
+          if(e.response.status === 409){
+            this.sessionAlreadyExistsError = true;
+            console.log(" SESSION WITH THE SAME DATE ALREADY EXISTS");
+            return
+          }
+          console.log(" ERROR IN UPDATING SESSION ");
+          console.log(e)
+          return
+        });
+      }else{
+        this.editEmployeeModal = false;
+      }
 
-      this.editEmployeeModal = false;
 
+
+      
+      
     },
     
     deleteEmployeeModalFunc() {
@@ -511,13 +550,16 @@ export default {
 
       if (this.items[this.selectedRow].columns.date != NewDate || this.items[this.selectedRow].columns.time != NewTime) {
         console.log(" The date was edited by the user ");
-        this.items[this.selectedRow].columns.date = NewDate
-        console.log(this.items[this.selectedRow].columns.date)
-        this.items[this.selectedRow].columns.time = NewTime;
-        console.log(this.items[this.selectedRow].columns.time)
-
+        // this.items[this.selectedRow].columns.date = NewDate
+        // console.log(this.items[this.selectedRow].columns.date)
+        // this.items[this.selectedRow].columns.time = NewTime;
+        // console.log(this.items[this.selectedRow].columns.time)
+        return {modifiedDate: true ,NewDate,NewTime};
+                
       } else {
         console.log(" The date was NOT edited by the user ");
+        return {modifiedDate: false ,newDate: null,NewTime:null};
+
       }
     },
     hideListEvent(){

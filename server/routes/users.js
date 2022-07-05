@@ -46,15 +46,15 @@ module.exports.initUserRoutes = (passport) => {
     );    
     
 
-
     /** Calls for Coach */  
-
     /** Get call */  
     router.get('/users/coach/seances' , userController.getCoachSessionList);
 
     /** Post call */  
-    router.post('/users/coach/seances/addSession', userController.addCoachSession)
-    router.post('/users/coach/seances/deleteId',   userController.deleteCoachSessionId)
+    router.post('/users/coach/seances/addSession',  userController.addCoachSession)
+    router.post('/users/coach/seances/deleteId',    userController.deleteCoachSessionId)
+    router.post('/users/coach/seances/editSession', userController.editCoachSession)
+    
 
     
     /** Calls for User */  

@@ -31,6 +31,10 @@ class UsersDataService {
     return http.post('/users/coach/seances/addSession', newSession);
   }
 
+  editCoachSession(editedSession){
+    return http.post('/users/coach/seances/editSession', editedSession);
+  }
+
 
 
 

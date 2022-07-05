@@ -193,12 +193,39 @@ addCoachSession = (req ,res ) => {
 }
 
 
+editCoachSession = (req ,res ) => {
+  let editedSession = req.body;
+  console.log(editedSession);
+  let dateTime = editedSession.date + " " + editedSession.time;
+
+  pool.query(
+    `UPDATE session SET title = $1, session_date = $2  WHERE session_id = $3`,
+    [editedSession.title,dateTime,editedSession.id],
+    (err,result)  => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        console.log(err);
+        if(err.code === '23505'){
+          return res.status(409).send({message : ` SESSION WITH THE SAME DATE ALLREADY EXISTS `})
+        }else{
+          return res.status(500).send({message : `ERROR IN EDITING SESSION`})
+        }
+      }
+      const addedSession = result.rows[0];
+      console.log(addedSession)
+      return res.status(200).send({message : ` SESSION UPDATED SUCCESSFFULY `});
+    }
+  )
+}
+
 
 module.exports.createUser = createUser;
 module.exports.getCoachSessionList = getCoachSessionList;
 module.exports.deleteCoachSessionId = deleteCoachSessionId;
 module.exports.authenticateUser = authenticateUser;
 module.exports.addCoachSession = addCoachSession;
+module.exports.editCoachSession = editCoachSession;
 
 
 
