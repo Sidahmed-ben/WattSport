@@ -55,7 +55,6 @@ function initialize(passport) {
       case 'isEntrain':
         table = "entrain"
         id_name = "entrain_id"
-
         break;
       default:
         return done(null,false);

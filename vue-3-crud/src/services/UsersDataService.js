@@ -35,10 +35,17 @@ class UsersDataService {
     return http.post('/users/coach/seances/editSession', editedSession);
   }
 
-
-
-
   // Cette partie concerne le User
+  registerUserSession(session){
+    return http.post('/users/user/seances/register', session);
+  }
+  
+  getUserValidSessionList(){
+    return http.get('/users/user/seances/valides');
+  }
+
+  
+
 }
 
 

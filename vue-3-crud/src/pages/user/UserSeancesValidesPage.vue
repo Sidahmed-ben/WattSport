@@ -51,7 +51,7 @@
     <br />
     <br />
     <br />
-    <TableSeanceUserCmp :titreTableau='"List des séances validèes"'></TableSeanceUserCmp>
+    <TableSeanceValidUserCmp :titreTableau='"List des séances validèes"'></TableSeanceValidUserCmp>
     <br />
     <br />
     <br />
@@ -60,11 +60,11 @@
 
 <script>
 import UsersDataService from "@/services/UsersDataService";
-import TableSeanceUserCmp from "../../components/TableSeanceUserCmp.vue";
+import TableSeanceValidUserCmp from "../../components/TableSeanceDispoValidUserCmp.vue";
 
 export default {
   name: "SeancesPage",
-  components: { TableSeanceUserCmp },
+  components: { TableSeanceValidUserCmp },
   props: [],
   data() {
     return {

@@ -60,8 +60,9 @@ module.exports.initUserRoutes = (passport) => {
     /** Calls for User */  
 
     /** Get call */  
-
+    router.get( '/users/user/seances/valides', userController.getUserValidSessionList);
     /** Post call */  
+    router.post('/users/user/seances/register', userController.registerUserInSession);
 
 }
 

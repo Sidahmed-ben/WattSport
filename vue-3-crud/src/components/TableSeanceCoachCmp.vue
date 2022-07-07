@@ -262,7 +262,7 @@ export default {
       addEmployeeModal: false,
       deleteEmployeeModal: false,
       selectedRow: null,
-      selectedRowContent: { titre: null, date: null, heure: null },
+      selectedRowContent: {id:null, titre: null, date: null, heure: null },
       addedRowContent: { titre: null },
       defaultTime: null,
       editedDate: null
@@ -278,6 +278,7 @@ export default {
           }
         }
       },
+
       selectedRowContent: {
         titre: {
           titre_validation: {
@@ -286,8 +287,7 @@ export default {
           }
         }
       }
-
-
+      
     }
   },
   mounted() {
@@ -338,6 +338,8 @@ export default {
       this.sessionAlreadyExistsError = false;
       this.selectedRow = index;
       let selectedRowContentArray = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+
+      this.selectedRowContent.id     = selectedRowContentArray.id;
       this.selectedRowContent.titre  = selectedRowContentArray.title;
       this.selectedRowContent.date   = selectedRowContentArray.date;
       this.selectedRowContent.heure  = selectedRowContentArray.time;
@@ -362,22 +364,30 @@ export default {
       // Update date 
       let update = false;
       const {modifiedDate,NewDate,NewTime} = this.saveNewDate();
-      
+      console.log("modifiedDate =>  ",modifiedDate);
       if(modifiedDate){
         update = true;
       }
 
       // // Update texts
       // For this array we have only Title that can be modifies as text
+      console.log("//////////////////////////////////////////");
       for (let i = 1; i < Object.values(avantModification).length; i++) {
+        console.log(this.normalize_spaces(Object.values(avantModification)[i]));
+        console.log(this.normalize_spaces(Object.values(apresModification)[i]));
         if (this.normalize_spaces(Object.values(avantModification)[i]) !== this.normalize_spaces(Object.values(apresModification)[i])) {
+          console.log(" je suis dans la modification du text ");
+          // console.log(this.normalize_spaces(Object.values(avantModification)[i]));
+          // console.log(this.normalize_spaces(Object.values(apresModification)[i]));
           update = true;
           break;
         }
       }
+      console.log("//////////////////////////////////////////");
       
-      
+      console.log(update);
       if(update){
+        console.log('////////////////////////////////////////////////////////////////');
         // Update the session in the database.
         let editedSession = { id   : this.items[this.selectedRow].columns.id,
                               title: apresModification.titre,
@@ -558,7 +568,7 @@ export default {
                 
       } else {
         console.log(" The date was NOT edited by the user ");
-        return {modifiedDate: false ,newDate: null,NewTime:null};
+        return {modifiedDate: false ,NewDate,NewTime};
 
       }
     },

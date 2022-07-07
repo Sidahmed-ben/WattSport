@@ -219,6 +219,54 @@ editCoachSession = (req ,res ) => {
   )
 }
 
+registerUserInSession = (req,res) => {
+  let registeredSession = req.body;
+  console.log(" User session data => ", req.user);
+  if(req.isAuthenticated()){
+    console.log("AUTHENTICATED")
+  }
+  pool.query(
+    `INSERT INTO entrain_session (session_id, entrain_id) VALUES($1,$2)`,
+    [registeredSession.id, req.user.entrain_id],
+    (err,result)  => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        console.log(err);
+        if(err.code === '23505'){
+          return res.status(409).send({message : `USER ALREADY REGISTERED IN THIS SESSION`})
+        }else{
+          return res.status(500).send({message : `ERROR ON REGISTERING USER IN THE SESSION`})
+        }
+      }
+      return res.status(200).send({message : ` USER REGISTERED IN SESSION SEUCCESSFFULY `});
+    }
+  )
+} 
+
+
+getUserValidSessionList = (req,res) => {
+  let registeredSession = req.body;
+  console.log(" User session data => ", req.user);
+  if(req.isAuthenticated()){
+    console.log("AUTHENTICATED")
+  }
+  pool.query(
+    `SELECT session.session_id, session.title, session.session_date FROM  entrain_session INNER JOIN session ON entrain_session.session_id = session.session_id WHERE entrain_session.entrain_id = $1 ORDER BY session.session_date`,
+    [req.user.entrain_id],
+    (err,result)  => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        console.log(err);
+        return res.status(500).send({message : `ERROR ON GETTING USER VALID SESSIONS`})
+      }
+      const validSessionList = result.rows
+      return res.status(200).send(validSessionList);
+    }
+  )
+} 
+
 
 module.exports.createUser = createUser;
 module.exports.getCoachSessionList = getCoachSessionList;
@@ -226,6 +274,8 @@ module.exports.deleteCoachSessionId = deleteCoachSessionId;
 module.exports.authenticateUser = authenticateUser;
 module.exports.addCoachSession = addCoachSession;
 module.exports.editCoachSession = editCoachSession;
+module.exports.registerUserInSession = registerUserInSession;
+module.exports.getUserValidSessionList = getUserValidSessionList;
 
 
 

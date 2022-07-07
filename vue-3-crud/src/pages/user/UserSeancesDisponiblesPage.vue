@@ -46,25 +46,28 @@
   <!--sidebar end-->
   <!--content start-->
   <div class="content" :class="{ disable: disable }">
-    <br />
-    <br />
-    <br />
-    <br />
-    <br />
-    <TableSeanceUserCmp :titreTableau='"List des séances desponibles"'></TableSeanceUserCmp>
-    <br />
-    <br />
-    <br />
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    <TableSeanceDispoUserCmp :titreTableau='"List des séances desponibles"'></TableSeanceDispoUserCmp>
+    <br/>
+    <br/>
+    <br/>
   </div>
 </template>
 
+
+
 <script>
+
 import UsersDataService from "@/services/UsersDataService";
-import TableSeanceUserCmp from "../../components/TableSeanceUserCmp.vue";
+import TableSeanceDispoUserCmp from "../../components/TableSeanceDispoUserCmp.vue";
 
 export default {
   name: "SeancesPage",
-  components: { TableSeanceUserCmp },
+  components: { TableSeanceDispoUserCmp },
   props: [],
   data() {
     return {
@@ -94,7 +97,11 @@ export default {
     },
   },
 };
+
 </script>
+
+
+
 
 <style scoped>
 /*  Navbar css */

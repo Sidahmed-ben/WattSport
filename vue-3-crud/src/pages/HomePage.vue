@@ -124,10 +124,10 @@
                       console.log(result.data);
                       switch(result.data.type){
                         case 'isEntrain' :
-                            this.$router.push('/coach/profil');
+                            this.$router.push('/user/profil');
                             break;
                         case 'isCoach' :
-                            this.$router.push('/user/profil');
+                            this.$router.push('/coach/profil');
                             break;
                         default :
                             console.log("ERROR : Unknown User type ");
