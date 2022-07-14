@@ -35,6 +35,20 @@ class UsersDataService {
     return http.post('/users/coach/seances/editSession', editedSession);
   }
 
+  getUsersByLesson(sessionId){
+    return http.post('/users/coach/seances/userParSeance', sessionId);
+  }
+
+  validateUserSession(user_session_Id){
+    return http.post('/users/coach/seances/validateUser', user_session_Id);
+  }
+
+  inValidateUserSession(user_session_Id){
+    return http.post('/users/coach/seances/invalidateUser', user_session_Id);
+  }
+
+
+  
   // Cette partie concerne le User
   registerUserSession(session){
     return http.post('/users/user/seances/register', session);
@@ -44,7 +58,7 @@ class UsersDataService {
     return http.get('/users/user/seances/valides');
   }
 
-  
+
 
 }
 

@@ -60,11 +60,11 @@
 
 <script>
 import UsersDataService from "@/services/UsersDataService";
-import TableSeanceValidUserCmp from "../../components/TableSeanceDispoValidUserCmp.vue";
+import TableSeanceValidUserCmp from "../../components/TableSeanceValidUserCmp.vue";
 
 export default {
   name: "SeancesPage",
-  components: { TableSeanceValidUserCmp },
+  components: {TableSeanceValidUserCmp},
   props: [],
   data() {
     return {
@@ -91,7 +91,7 @@ export default {
     onClickChild(disable) {
       console.log("onclick");
       this.disable = disable;
-    },
+    }
   },
 };
 </script>

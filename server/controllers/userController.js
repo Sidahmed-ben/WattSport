@@ -246,13 +246,12 @@ registerUserInSession = (req,res) => {
 
 
 getUserValidSessionList = (req,res) => {
-  let registeredSession = req.body;
   console.log(" User session data => ", req.user);
   if(req.isAuthenticated()){
     console.log("AUTHENTICATED")
   }
   pool.query(
-    `SELECT session.session_id, session.title, session.session_date FROM  entrain_session INNER JOIN session ON entrain_session.session_id = session.session_id WHERE entrain_session.entrain_id = $1 ORDER BY session.session_date`,
+    `SELECT entrain_session.validated, session.session_id, session.title, session.session_date FROM  entrain_session INNER JOIN session ON entrain_session.session_id = session.session_id WHERE entrain_session.entrain_id = $1 ORDER BY session.session_date`,
     [req.user.entrain_id],
     (err,result)  => {
       if(err){
@@ -268,6 +267,85 @@ getUserValidSessionList = (req,res) => {
 } 
 
 
+
+getUsersByLesson = (req,res) => {
+  let sessionId = req.body.id;
+  console.log(" The id of the selected session => ", sessionId);
+  if(req.isAuthenticated()){
+    console.log("AUTHENTICATED")
+  }
+
+  pool.query(
+    'SELECT entrain.entrain_id,entrain.name, entrain.email, entrain_session.validated FROM entrain_session JOIN entrain ON entrain_session.entrain_id = entrain.entrain_id WHERE session_id = $1',
+    [sessionId],
+    (err,result)  => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        console.log(err);
+        return res.status(500).send({message : `ERROR ON GETTING USERS BY LESSON`})
+      }
+      const users = result.rows
+      return res.status(200).send(users);
+    }
+  )
+} 
+
+validateUserSession = (req,res) => {
+  
+  console.log(" The user and the sesion Id => ", req.body);
+  let userId = req.body.userId;
+  let sessionId = req.body.sessionId;
+
+  if(req.isAuthenticated()){
+    console.log("AUTHENTICATED")
+  }
+  
+  pool.query(
+    `UPDATE entrain_session SET validated = 't' WHERE session_id = $1 AND entrain_id = $2`,
+    [sessionId, userId],
+    (err,result)  => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        console.log(err);
+        return res.status(500).send({message : `ERROR ON VALIDATING USER'S SESSION BY THE COACH`});
+      }
+      return res.status(200).send({message : `USER VALIDATED SUCCEFFULLY`});
+    }
+  )
+}  
+
+invalidateUserSession = (req,res) => {
+  
+  console.log(" The user and the sesion Id => ", req.body);
+  let userId = req.body.userId;
+  let sessionId = req.body.sessionId;
+
+  if(req.isAuthenticated()){
+    console.log("AUTHENTICATED")
+  }
+
+  
+  pool.query(
+    `DELETE FROM entrain_session WHERE entrain_id = $1 AND session_id = $2`,
+    [userId,sessionId],
+    (err,result)  => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        console.log(err);
+        return res.status(500).send({message : `ERROR ON INVALIDATING USER'S SESSION BY THE COACH`});
+      }
+      return res.status(200).send({message : `USER INVALIDATED SUCCEFFULLY`});
+    }
+  )
+}  
+
+
+
+module.exports.invalidateUserSession = invalidateUserSession ;
+module.exports.validateUserSession = validateUserSession; 
 module.exports.createUser = createUser;
 module.exports.getCoachSessionList = getCoachSessionList;
 module.exports.deleteCoachSessionId = deleteCoachSessionId;
@@ -276,6 +354,7 @@ module.exports.addCoachSession = addCoachSession;
 module.exports.editCoachSession = editCoachSession;
 module.exports.registerUserInSession = registerUserInSession;
 module.exports.getUserValidSessionList = getUserValidSessionList;
+module.exports.getUsersByLesson = getUsersByLesson;
 
 
 

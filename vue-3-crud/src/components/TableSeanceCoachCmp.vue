@@ -216,7 +216,7 @@
   </div>
   <!-- List des utilisateurs pour chaque séance -->
   <div id="ListUsersModal" v-if="listUsers">
-    <ListUsersByLesson @hideListEvent="hideListEvent" ></ListUsersByLesson>
+    <ListUsersByLesson  :selectedSession="items[selectedRow].columns" @hideListEvent="hideListEvent" ></ListUsersByLesson>
   </div>
 
 
@@ -318,9 +318,9 @@ export default {
           // Session id
           sessionId = session.session_id;
           console.log(sessionId);
-
           item = { columns: {id:sessionId,title:sessionTitle,date:formatedDate,time:formatedTime}};
-          this.items.push(item);  
+          this.items.push(item);
+
         });
       })
       .catch((e) =>{

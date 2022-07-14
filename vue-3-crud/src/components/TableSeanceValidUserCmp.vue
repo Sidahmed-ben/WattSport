@@ -5,7 +5,7 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
   />
   <!-- Bootstrap Icons Ends -->
-  <div class="container-xl div-cont-xl">
+  <!-- <div class="container-xl div-cont-xl">
     <div class="table-responsive">
       <div class="table-wrapper">
         <div class="table-title" >
@@ -18,13 +18,11 @@
           </div>
         </div>
         <table class="table table-striped table-hover">
-          <!-- <div> -->
           <thead>
             <tr>
               <th v-for="(column, index) in columns" :key="index">{{ column.column }}</th>
             </tr>
           </thead>
-          <!-- </div> -->
           <tbody>
             <tr v-for="(item,index1) in items" :key="index1">
               <td v-for="(column,index2) in item.columns" :key="index2">
@@ -33,11 +31,30 @@
             </tr>
           </tbody>
         </table>
-        <!--  Fin du tableau  -->
+      </div>
+    </div>
+  </div>-->
+    <div class="container-xl div-cont-xl">
+    <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+  <div class="col" v-for="(item,index1) in items" :key="index1">
+    <div class="card mb-4 shadow-sm">
+      <div class="card-header py-3">
+        <h4 class="my-0 fw-normal">Pro</h4>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title pricing-card-title">
+          Titre 1
+        </h3>
+        <ul class="list-unstyled mt-3 mb-4">
+          <li v-for="(column,index2) in item.columns" :key="index2" >{{column}}</li>
+        </ul>
+        <button type="button" class="w-100 btn btn-lg btn-success">Get started</button>
       </div>
     </div>
   </div>
-  
+  </div>
+  </div>
+
 
 
 </template>
@@ -65,58 +82,63 @@ export default {
         let item;
         // Session Data
         let formatedDate;
-        let formatedTime; 
+        let formatedTime;
         let sessionTitle;
         let sessionId;
         // Itérate the array that contains session data
         result.data.forEach(session => {
-          console.log(session.session_date);
-          sessionDate = session.session_date;
-          // Session date
-          formatedDate = this.extractDateFromQuery(sessionDate);
-          console.log(" Formated date ",formatedDate);
-          // Session time
-          formatedTime = this.extractTimeFromQuery(sessionDate);
-          console.log("formatedTime " ,formatedTime);
-          // Session title
-          sessionTitle = session.title;
-          console.log(sessionTitle);
-          // Session id
-          sessionId = session.session_id;
-          console.log(sessionId);
-          item = { columns: {id:sessionId,title:sessionTitle,date:formatedDate,time:formatedTime}};
-          this.items.push(item);  
+          console.log("session => ", session);
+          // session.validated added
+          // Continue here (Vérifier si le cours est validé par le prof avant de l'afficher)
+          if (session.validated) {
+            console.log(session.session_date);
+            sessionDate = session.session_date;
+            // Session date
+            formatedDate = this.extractDateFromQuery(sessionDate);
+            console.log(" Formated date ", formatedDate);
+            // Session time
+            formatedTime = this.extractTimeFromQuery(sessionDate);
+            console.log("formatedTime ", formatedTime);
+            // Session title
+            sessionTitle = session.title;
+            console.log(sessionTitle);
+            // Session id
+            sessionId = session.session_id;
+            console.log(sessionId);
+            item = { columns: { id: sessionId, title: sessionTitle, date: formatedDate, time: formatedTime } };
+            this.items.push(item);
+          }
         });
       })
-      .catch((e) =>{
+      .catch((e) => {
         console.log(" Error in user valid lessons Fetching ")
         console.log(e)
       });
 
-    this.columns = [{ column: "Id", type: null },{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }];
+    this.columns = [{ column: "Id", type: null }, { column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }];
     console.log(" Mounted ");
   },
 
   methods: {
-    extractDateFromQuery(query){
+    extractDateFromQuery(query) {
       // Extraction de la date
       let formated_date = query.match("[0-9]{4}([-/.])[0-9]{2}[-/.][0-9]{2}");
-      if(formated_date != null) {
+      if (formated_date != null) {
         let dateSplitted = formated_date[0];
         return dateSplitted;
-      }else{
-        console.log( "EXTRACTED DATE FORMAT FROM POSTGRESQL ERROR (REGEX ERROR)");
+      } else {
+        console.log("EXTRACTED DATE FORMAT FROM POSTGRESQL ERROR (REGEX ERROR)");
         return null;
       }
     },
-    extractTimeFromQuery(query){
+    extractTimeFromQuery(query) {
       // Extraction de la date
       let formated_time = query.match("[0-9]{2}[:][0-9]{2}");
-      if(formated_time != null) {
+      if (formated_time != null) {
         let timeSplitted = formated_time[0];
         return timeSplitted;
-      }else{
-        console.log( "EXTRACTED TIME FORMAT FROM POSTGRESQL ERROR (REGEX ERROR)");
+      } else {
+        console.log("EXTRACTED TIME FORMAT FROM POSTGRESQL ERROR (REGEX ERROR)");
         return null;
       }
     },
@@ -203,7 +225,6 @@ table.table-striped tbody button {
   margin-left: 10px;
 }
 
-
 table.table-striped tbody tr:nth-of-type(odd) {
   background-color: #fcfcfc;
 }
@@ -269,17 +290,20 @@ table.table td i {
 }
 /* ---------------------------------------------- */
 
+button#exit {
+  line-height: 12px;
+  width: 18px;
+  font-size: 15pt;
+  font-family: tahoma;
+  margin-top: 1px;
+  margin-right: 2px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+}
 
-button#exit{
-     line-height: 12px;
-     width: 18px;
-     font-size: 15pt;
-     font-family: tahoma;
-     margin-top: 1px;
-     margin-right: 2px;
-     position:absolute;
-     top:0;
-     right:0;
-     color: white;
+div.card.mb-4.shadow-sm{
+  border-radius: 0.6rem ;
 }
 </style>

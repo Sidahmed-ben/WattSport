@@ -31,12 +31,20 @@
           </thead>
           <!-- </div> -->
           <tbody>
-            <tr v-for="(item,index1) in items" :key="index1">
+            <tr v-for="(item,index1) in items" :key="index1" >
               <td v-for="(column,index2) in item.columns" :key="index2">
-                {{ column }}</td>
-              <td>
-                <div>
-                  <button type="button" class="btn btn-primary" @click="sessionRegister(index1)">s'inscrire</button>
+                <div v-if="index2 !== 'validated'">
+                  {{ column }}, {{index2 }}, {{index1}}
+                </div>
+                <div v-else>
+                  <!-- Ça veut dire que le cours est soit validé soit en cours de validation -->
+                  <div v-if="column.inValidList">
+                    <button type="button" class="btn btn-secondary disabled" @click="sessionRegister(index1)" >Demande en cours..</button>
+                  </div>
+                  <!-- Ça veut dire que le cours est diponible pour s'enregistrer -->
+                  <div v-else>
+                    <button type="button" class="btn btn-primary"   @click="sessionRegister(index1)" >s'inscrire</button>
+                  </div>
                 </div>
               </td>
             </tr>
@@ -63,9 +71,28 @@ export default {
     return {
       items: [],
       columns: [],
+      itemRefs: []
     };
   },
   mounted() {
+    
+    let listValidSession = [];
+    UsersDataService.getUserValidSessionList()
+      .then((result) => {
+        // Itérate the array that contains session data
+        console.log(" getUserValidSessionList Successfful ");
+        result.data.forEach(session => {
+          listValidSession.push({id: session.session_id, validated:session.validated });
+        });
+      })
+      .catch((e) =>{
+        console.log(" Error in user valid lessons Fetching ")
+        console.log(e)
+      });
+
+      console.log(listValidSession);
+
+
     UsersDataService.getCoachSessionList()
       .then((result) => {
         console.log(" lessons Fetched Successfuly ")
@@ -79,24 +106,43 @@ export default {
         let sessionId;
         // Itérate the array that contains session data
         result.data.forEach(session => {
-          console.log(session.session_date);
+          // console.log(session.session_date);
           sessionDate = session.session_date;
           // Session date
           formatedDate = this.extractDateFromQuery(sessionDate);
-          console.log(" Formated date ",formatedDate);
+          // console.log(" Formated date ",formatedDate);
           // Session time
           formatedTime = this.extractTimeFromQuery(sessionDate);
-          console.log("formatedTime " ,formatedTime);
+          // console.log("formatedTime " ,formatedTime);
           // Session title
           sessionTitle = session.title;
-          console.log(sessionTitle);
+          // console.log(sessionTitle);
           // Session id
           sessionId = session.session_id;
-          console.log(sessionId);
+          // console.log(sessionId);
 
-          item = { columns: {id:sessionId,title:sessionTitle,date:formatedDate,time:formatedTime}};
-          this.items.push(item);  
+          let validated   = false,
+              inValidList = false;
+          listValidSession.forEach(valSess => {
+            if(valSess.id === sessionId ){
+              inValidList = true;
+              // Si on rentre ici veut dire que soit le cours à été validé ou encore de validation
+              if(valSess.validated === true){
+                validated = true;
+              }else{
+                validated = false;
+              }
+            }
+          });
+
+          if(validated === true){
+            console.log(" Le cours est déja validé ");
+          }else{
+            item = { columns: {id:sessionId,title:sessionTitle,date:formatedDate,time:formatedTime,validated:{inValidList}}};
+            this.items.push(item);  
+          }
         });
+
       })
       .catch((e) =>{
         console.log(" Erro in coach lessons Fetching ")
@@ -105,6 +151,8 @@ export default {
 
     this.columns = [{ column: "Id", type: null },{ column: "Titre", type: "text" }, { column: "Date : aaaa/mm/jj ", type: "TimePicker" }, { column: "Heure", type: null }, { column: "Actions", type: null }];
     console.log(" Mounted ");
+    
+  
   },
 
 
@@ -136,12 +184,14 @@ export default {
       }
     },
     sessionRegister(index){
+      console.log("index ==> ", index);
       this.selectedRow = index;
       let selectedSession = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
       UsersDataService.registerUserSession(selectedSession)
         .then((result) => {
+          // To Update the front-end 
+          this.items[this.selectedRow].columns.validated.inValidList = true;
           console.log(result);
-
         })
       .catch((e) =>{
         if(e.response.status === 409){
@@ -229,7 +279,7 @@ table.table tr th:first-child {
   width: auto;
 }
 table.table tr th:last-child {
-  width: 180px;
+  width: 210px;
   padding-left: 40px;
 }
 

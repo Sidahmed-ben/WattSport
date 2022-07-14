@@ -32,11 +32,25 @@
           <!-- </div> -->
           <tbody>
             <tr v-for="(item,index1) in items" :key="index1">
-              <td v-for="(column,index2) in item.columns" :key="index2">{{ column }}</td>
-              <td>
-                <div>
-                  <button type="button" class="btn btn-outline-success Valider">Valider</button>
-                  <button type="button" class="btn btn-outline-danger Supprimer">Supprimer</button>
+              <td v-for="(column,index2) in item.columns" :key="index2">
+                <div v-if="index2 !=='validated'">
+                  {{ column }}, {{index2}}
+                </div>
+                <div v-else>
+                  <!-- The session was not validated by the coach -->
+                  <div v-if='column === false'>
+                    <button type="button" class="btn btn-outline-success" @click="validateUser(index1)">Valider</button>      
+                    <button type="button" class="btn btn-outline-danger"  @click="invalidateUser(index1)">Supprimer</button>
+                  </div>
+                  <!-- Session was already validated by the coach -->
+                  <div class ="admis" v-else-if = 'column === true'>
+                    <button type="button" class="btn btn-success disabled">Validé</button>      
+                  </div>
+                  
+                  <div class ="supp" v-else>
+                    <button type="button" class="btn btn-danger disabled">Supprimé</button>      
+                  </div>
+
                 </div>
               </td>
             </tr>
@@ -52,46 +66,89 @@
 </template>
 
 <script>
-
+import UsersDataService from "@/services/UsersDataService";
 
 export default {
   name: "ListUsersByLesson",
   components: {  },
-  props: [],
+  props: ["selectedSession"],
   data() {
     return {
       items: [],
       columns: [],
       titreTableau: "",
-      selectedRow: null,
-      selectedRowContent: { titre: null, date: null, heure: null },
     };
   },
   mounted() {
-    this.items = 
-    [
-      { columns: [" Utilisateur 1"] },
-      { columns: [" Utilisateur 2"] },
-      { columns: [" Utilisateur 3"] },
-      { columns: [" Utilisateur 4"] },
-      { columns: [" Utilisateur 5"] },
-      { columns: [" Utilisateur 6"] },
-      { columns: [" Utilisateur 7"] },
-      { columns: [" Utilisateur 8"] },
-      { columns: [" Utilisateur 9"] },
-      { columns: [" Utilisateur 10"] },
-      { columns: [" Utilisateur 11"] },
-      { columns: [" Utilisateur 12"] },
-    ],
-    this.columns = [{ column: "Titre", type: "text" }, { column: "Actions", type: null }];
+
+    this.columns = [{ column: "Id", type: "text" },{ column: "Nom", type: "text" }, { column: "Email", type: "text" },{ column: "Actions", type: null }];
     this.titreTableau = "List des utilisateurs ";
+    let selectedSessionJson = JSON.parse(JSON.stringify(this.selectedSession));
+    console.log(" Je suis dans la list, la session séléctionnée est => ",selectedSessionJson.id);
+
+    UsersDataService.getUsersByLesson({id :selectedSessionJson.id})
+      .then((result) => {
+        console.log(" Coach's lessons by user Fetched Successfuly")
+        console.log(result.data);
+        let users = result.data ;
+        let item;
+        // Itérate the array that contains session data
+        users.forEach(user => {
+          item = {columns: {id:user.entrain_id,name:user.name,email:user.email,validated:user.validated}};
+          this.items.push(item);
+        });
+      })
+      .catch((e) =>{
+        console.log(" Erro in coach's lessons by user Fetching ")
+        console.log(e)
+      });
+
+    this.titreTableau = "Séances";
     console.log(" Mounted ");
   },
-
   methods: {
     hideListEvent() {
       console.log("HideList");
       this.$emit('hideListEvent')
+    },
+    validateUser(index){
+      console.log("utilisateur validé => ", JSON.parse(JSON.stringify(this.items[index])) );
+      let userId = JSON.parse(JSON.stringify(this.items[index])).columns.id;
+      let selectedSessionJson = JSON.parse(JSON.stringify(this.selectedSession));
+      let sessionId = selectedSessionJson.id ;
+      console.log("userId => ",userId,"SessionId => ",sessionId );
+      UsersDataService.validateUserSession({userId, sessionId})
+        .then((result) => {
+          console.log(" Succefful Coach Validation ");
+          // Update the front-end 
+          this.items[index].columns.validated = true
+          console.log(result);
+
+        })
+        .catch((e) =>{
+          console.log(" Erro in users validation by the coach. ")
+          console.log(e)
+        });
+    },
+    invalidateUser(index){
+      // Invalidate user means that we delete his row in entrain_session table in db.
+      console.log("utilisateur inValidé => ", JSON.parse(JSON.stringify(this.items[index])) );
+      let userId = JSON.parse(JSON.stringify(this.items[index])).columns.id;
+      let selectedSessionJson = JSON.parse(JSON.stringify(this.selectedSession));
+      let sessionId = selectedSessionJson.id ;
+      console.log("userId => ",userId,"SessionId => ",sessionId );
+      UsersDataService.inValidateUserSession({userId, sessionId})
+        .then((result) => {
+          console.log(" Succefful Coach inValidation ");
+          // Update the front-end 
+          this.items[index].columns.validated = null;
+          console.log(result);
+        })
+        .catch((e) =>{
+          console.log(" Error in users invalidation by the coach. ")
+          console.log(e)
+        })
+
     }
   }
 };
@@ -169,6 +226,7 @@ table.table tr th:first-child {
 }
 table.table tr th:last-child {
   width: 230px;
+  text-align: center;
 }
 
 table.table-striped tbody button {
@@ -253,5 +311,9 @@ button#exit{
      top:0;
      right:0;
      color: white;
+}
+
+div.admis, div.supp{
+  text-align: center;
 }
 </style>
