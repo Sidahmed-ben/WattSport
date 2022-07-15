@@ -218,7 +218,8 @@
       font-weight: 600;
       color: #fff;
       transition: 0.5s;
-      transition-property: background;
+      width: 100px;
+      border-radius: 20px;
     }
 
     .logout_btn:hover {

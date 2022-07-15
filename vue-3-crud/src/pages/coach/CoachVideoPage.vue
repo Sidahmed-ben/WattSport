@@ -1,24 +1,18 @@
 <template>
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round"
-  />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" />
   <link
     rel="stylesheet"
     href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
   />
-
+  
   <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-  />
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/icon?family=Material+Icons"
-  />
+  /> 
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
   <!--header area start-->
-  <header :class="{ disable: disable }">
+  <header :class="{ disable: disable  }">
     <div class="left_area">
       <h3>Watt Sport</h3>
     </div>
@@ -28,54 +22,52 @@
   </header>
   <!--header area end-->
   <!--sidebar start-->
-  <div class="sidebar" :class="{ disable: disable }">
+  <div class="sidebar"  :class="{ disable: disable  }">
     <center>
       <img src="../../../public/home.png" class="profile_image" alt />
-      <h4>{{ "User name" }}</h4>
+      <h4>{{ "Coach name" }}</h4>
     </center>
-    <router-link to="/user/profil" class="nav-link">
+    <router-link to="/coach/profil" class="nav-link">
       <span>Profil</span>
     </router-link>
-    <router-link to class="nav-link">
-      <span>Séances disponibles </span>
+    <router-link to="/coach/seances" class="nav-link">
+      <span>Séances</span>
     </router-link>
-    <router-link to="/user/seances_valides" class="nav-link">
-      <span>Sèances validèes</span>
-    </router-link>
+    <router-link to="" class="nav-link"><span>Vidéo</span></router-link>
+
   </div>
   <!--sidebar end-->
   <!--content start-->
-  <div class="content" :class="{ disable: disable }">
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <TableSeanceDispoUserCmp :titreTableau='"List des séances disponibles"'></TableSeanceDispoUserCmp>
-    <br/>
-    <br/>
-    <br/>
+  <div class="content"  :class="{ disable: disable  }">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <h1> HELLO </h1>
+    <br />
+    <br />
+    <br />
   </div>
 </template>
-
-
 
 <script>
 
 import UsersDataService from "@/services/UsersDataService";
-import TableSeanceDispoUserCmp from "../../components/TableSeanceDispoUserCmp.vue";
+
 
 export default {
-  name: "SeancesPage",
-  components: { TableSeanceDispoUserCmp },
+
+  name: "VideoPage",
+  components: {  },
   props: [],
   data() {
     return {
       disable: false,
-      editEmployeeModal: false,
-      addEmployeeModal: false,
-      deleteEmployeeModal: false,
-    };
+      editEmployeeModal : false,
+      addEmployeeModal : false,
+      deleteEmployeeModal : false
+    }
   },
   methods: {
     userLogout() {
@@ -91,17 +83,14 @@ export default {
           this.servErrors.push({ error: e.response.data });
         });
     },
-    onClickChild(disable) {
+    onClickChild(disable){
       console.log("onclick");
-      this.disable = disable;
-    },
+      this.disable = disable
+    }
+
   },
 };
-
 </script>
-
-
-
 
 <style scoped>
 /*  Navbar css */
@@ -192,7 +181,6 @@ header {
   font-weight: 600;
   color: #fff;
   transition: 0.5s;
-  transition-property: background;
   width: 100px;
   border-radius: 20px;
 }
@@ -257,7 +245,8 @@ header {
 }
 /* ---------------------------------------------- */
 
-.disable {
+.disable{
   pointer-events: none;
 }
+
 </style>

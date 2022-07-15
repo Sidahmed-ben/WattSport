@@ -33,6 +33,8 @@
     <router-link to="" class="nav-link">
       <span>Séances</span>
     </router-link>
+    <router-link to="/coach/video" class="nav-link"><span>Vidéo</span></router-link>
+
   </div>
   <!--sidebar end-->
   <!--content start-->
@@ -180,7 +182,8 @@ header {
   font-weight: 600;
   color: #fff;
   transition: 0.5s;
-  transition-property: background;
+  width: 100px;
+  border-radius: 20px;
 }
 
 .logout_btn:hover {

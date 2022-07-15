@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from "vue-router";
 import HomePage from "../pages/HomePage";
 import RegisterPage from "../pages/RegisterPage";
 import CoachHomePage from "../pages/coach/CoachHomePage";
+import CoachVideoPage from "../pages/coach/CoachVideoPage";
 import CoachSeancesPage from "../pages/coach/CoachSeancesPage";
 import UserHomePage from "../pages/user/UserHomePage";
 import UserSeancesDisponiblesPage from "../pages/user/UserSeancesDisponiblesPage";
@@ -52,6 +53,15 @@ const routes =  [
     props: true
 
   },
+
+  {
+    path: "/coach/video",
+    name: "CoachVideoPage",
+    component: CoachVideoPage,
+    props: true
+  },
+
+
   // User  
   {
     path: "/user/profil",
@@ -71,7 +81,7 @@ const routes =  [
     name: "UserSeancesPage",
     component: UserSeancesValidesPage,
     props: true
-  },
+  }
 ];
 
 const router = createRouter({

@@ -39,24 +39,24 @@
   <div class="col" v-for="(item,index1) in items" :key="index1">
     <div class="card mb-4 shadow-sm">
       <div class="card-header py-3">
-        <h4 class="my-0 fw-normal">Pro</h4>
+        <h4 class="my-0 fw-normal">Séance {{index1+1}}</h4>
       </div>
       <div class="card-body">
-        <h3 class="card-title pricing-card-title">
-          Titre 1
-        </h3>
+        <h5 class="card-title pricing-card-title">
+          {{item.columns.title}}
+        </h5>
         <ul class="list-unstyled mt-3 mb-4">
-          <li v-for="(column,index2) in item.columns" :key="index2" >{{column}}</li>
+          <li>{{item.columns.id}}</li>
+          <li>{{item.columns.date}}</li>
+          <li>{{item.columns.time}}</li>
+          <!-- <li v-for="(column,index2) in item.columns" :key="index2" >{{column}}</li> -->
         </ul>
-        <button type="button" class="w-100 btn btn-lg btn-success">Get started</button>
+        <button type="button" class="w-100 btn btn-lg btn-success">Commencer</button>
       </div>
     </div>
   </div>
   </div>
   </div>
-
-
-
 </template>
 
 <script>
@@ -305,5 +305,14 @@ button#exit {
 
 div.card.mb-4.shadow-sm{
   border-radius: 0.6rem ;
+}
+
+div.container-xl.div-cont-xl{
+  height: 750px;
+  margin-top: 20px;
+}
+
+div.row.row-cols-1.row-cols-md-3.mb-3.text-center{
+  margin: 0px;
 }
 </style>

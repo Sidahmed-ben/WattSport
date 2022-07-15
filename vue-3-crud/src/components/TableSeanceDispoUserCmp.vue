@@ -34,7 +34,7 @@
             <tr v-for="(item,index1) in items" :key="index1" >
               <td v-for="(column,index2) in item.columns" :key="index2">
                 <div v-if="index2 !== 'validated'">
-                  {{ column }}, {{index2 }}, {{index1}}
+                  {{ column }}
                 </div>
                 <div v-else>
                   <!-- Ça veut dire que le cours est soit validé soit en cours de validation -->
