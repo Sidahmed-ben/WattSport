@@ -51,9 +51,9 @@
                                     <div class="input-errors" v-if="v$.form.password.$errors.length > 0" :key="index">
                                         <div class="error-msg">{{ v$.form.password.$errors[0].$message }}</div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button>
+                                    <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">se connecter</button>
                                     <div>
-                                        <router-link :to="{name:'RegisterPage'}">Register</router-link>
+                                        <router-link :to="{name:'RegisterPage'}">Créer un compte</router-link>
                                     </div>
                                 </form>
                             </div>
@@ -185,7 +185,7 @@
     }
 
     button{
-        width: 200px;
+        width: 160px;
         margin-top: 30px;
     }
 
@@ -198,3 +198,6 @@
     }
 
 </style>
+
+
+

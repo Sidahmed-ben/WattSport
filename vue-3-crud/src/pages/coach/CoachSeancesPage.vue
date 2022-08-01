@@ -61,7 +61,7 @@ export default {
 
   name: "SeancesPage",
   components: { TableSeanceCoachCmp },
-  props: [],
+  props: ['type'],
   data() {
     return {
       disable: false,
@@ -69,6 +69,9 @@ export default {
       addEmployeeModal : false,
       deleteEmployeeModal : false
     }
+  },
+  mounted(){
+    console.log(" MOUNTED 3EMI WITH TYPE = ",this.type);
   },
   methods: {
     userLogout() {

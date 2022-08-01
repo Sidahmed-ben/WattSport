@@ -34,7 +34,7 @@
             <tr v-for="(item,index1) in items" :key="index1">
               <td v-for="(column,index2) in item.columns" :key="index2">
                 <div v-if="index2 !=='validated'">
-                  {{ column }}, {{index2}}
+                  {{ column }}
                 </div>
                 <div v-else>
                   <!-- The session was not validated by the coach -->
@@ -103,7 +103,7 @@ export default {
         console.log(e)
       });
 
-    this.titreTableau = "Séances";
+    this.titreTableau = "Utilisateurs";
     console.log(" Mounted ");
   },
   methods: {

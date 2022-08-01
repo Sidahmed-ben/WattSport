@@ -11,7 +11,7 @@ const PORT = 8082;
 // Corse configuration.
 var corsOptions = {
   // Client adresse
-  origin: "http://localhost:8080",
+  origin: "http://localhost:8081",
   credentials: true,
 };
 app.use(cors(corsOptions));

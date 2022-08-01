@@ -1,4 +1,5 @@
 <template>
+
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round" />
   <link
     rel="stylesheet"
@@ -44,50 +45,87 @@
     <br />
     <br />
     <br />
-    <h1> HELLO </h1>
+    <!-- ------------------------ VIDEO CONTENT START ---------------------------------------- -->
+
+    <v-card class="ma-2">
+      <v-container>
+        <v-layout>
+          {{ message }}
+          <div id="meet"></div>
+          <!-- missing -->
+        </v-layout>
+      </v-container>
+    </v-card>
+
+    <!-- ------------------------ VIDEO CONTENT END ------------------------------------------ -->
     <br />
     <br />
     <br />
   </div>
 </template>
 
+
+
+
+
+
 <script>
-
-import UsersDataService from "@/services/UsersDataService";
-
+  import JitsiMeetExternalAPI from "lib-jitsi-meet"
 
 export default {
 
-  name: "VideoPage",
-  components: {  },
-  props: [],
-  data() {
-    return {
-      disable: false,
-      editEmployeeModal : false,
-      addEmployeeModal : false,
-      deleteEmployeeModal : false
-    }
-  },
-  methods: {
-    userLogout() {
-      console.log("///////////////////////////");
-      UsersDataService.logoutUser()
-        .then((result) => {
-          console.log(" Users Logout succeffuly");
-          console.log(result);
-          this.$router.push("/login");
-        })
-        .catch((e) => {
-          console.log(e.response.data);
-          this.servErrors.push({ error: e.response.data });
-        });
-    },
-    onClickChild(disable){
-      console.log("onclick");
-      this.disable = disable
-    }
 
+  name: "AtendimentoMedico",
+  data: () => ({
+    search: "",
+    message: "Hello",
+    api: null,
+    room: "test romm",
+    username: "rabie",
+  }),
+
+  mounted() {
+    this.openRoom();
+  },
+
+  methods: {
+    startConference() {
+      var _this = this;
+      try {
+        const domain = "meet.jit.si";
+        const options = {
+          roomName: this.room,
+          height: 500,
+          parentNode: document.querySelector("#meet"),
+          interfaceConfigOverwrite: {
+            filmStripOnly: false,
+            SHOW_JITSI_WATERMARK: false,
+          },
+          configOverwrite: {
+            disableSimulcast: false,
+          },
+        };
+
+        this.api = new JitsiMeetExternalAPI(domain, options);
+        this.api.addEventListener("videoConferenceJoined", () => {
+          console.log("Local User Joined");
+
+          _this.api.executeCommand("displayName", _this.username);
+        });
+      } catch (error) {
+        console.error("Failed to load Jitsi API", error);
+      }
+    },
+    openRoom() {
+      // verify the JitsiMeetExternalAPI constructor is added to the global..
+      if (window.JitsiMeetExternalAPI) {
+        var person = prompt("Please enter your name:", "Rabie");
+        if (person != null || person != "") this.username = person;
+        var room = prompt("Please enter your room:", "Test Room");
+        if (room != null || room != "") this.room = room;
+        this.startConference();
+      } else alert("Jitsi Meet API script not loaded");
+    },
   },
 };
 </script>

@@ -4,6 +4,7 @@ import RegisterPage from "../pages/RegisterPage";
 import CoachHomePage from "../pages/coach/CoachHomePage";
 import CoachVideoPage from "../pages/coach/CoachVideoPage";
 import CoachSeancesPage from "../pages/coach/CoachSeancesPage";
+import CoachSessionTypePage from "../pages/coach/CoachSessionTypePage";
 import UserHomePage from "../pages/user/UserHomePage";
 import UserSeancesDisponiblesPage from "../pages/user/UserSeancesDisponiblesPage";
 import UserSeancesValidesPage from "../pages/user/UserSeancesValidesPage";
@@ -47,11 +48,10 @@ const routes =  [
 
   },
   {
-    path: "/coach/seances",
-    name: "SeancesPage",
-    component: CoachSeancesPage,
+    path: "/coach/seances_types",
+    name: "CoachSessionTypePage",
+    component: CoachSessionTypePage,
     props: true
-
   },
 
   {
@@ -61,6 +61,12 @@ const routes =  [
     props: true
   },
 
+  {
+    path: "/coach/seances_types/:type",
+    name: "CoachSeancesPage",
+    component: CoachSeancesPage,
+    props: true
+  },
 
   // User  
   {

@@ -33,74 +33,87 @@
 
   <!--content start-->
   <div class="content">
+    <!-- <br />
     <br />
     <br />
     <br />
     <br />
-    <br />
-    <div class="container">
-      <div class="row">
-        <div class="col-md-4 col-xl-3">
-          <div class="card bg-c-blue order-card">
-            <div class="card-block">
-              <h6 class="m-b-20">Name</h6>
-              <h2 class="text-right">
-                <i class="fas fa-user-tie f-left"></i>
-              </h2>
-              <p>
-                <span style="font-size: 20px;">{{ "Name" }}</span>
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <div class="col-md-4 col-xl-3">
-          <div class="card bg-c-green order-card">
-            <div class="card-block">
-              <h6 class="m-b-20">Mobile</h6>
-              <h2 class="text-right">
-                <i class="fas fa-mobile-alt f-left"></i>
-              </h2>
-              <p>
-                <span style="font-size: 20px;">{{ "Mobile" }}</span>
-              </p>
-            </div>
-          </div>
-        </div>
+    <br />
+    <br />
+    <br /> -->
 
-        <div class="col-md-4 col-xl-3">
-          <div class="card bg-c-yellow order-card">
-            <div class="card-block">
-              <h6 class="m-b-20">Roll</h6>
-              <h2 class="text-right">
-                <i class="fas fa-list-ol f-left"></i>
-              </h2>
-              <p>
-                <span style="font-size: 20px;">{{ "roll" }}</span>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4 col-xl-3">
-          <div class="card bg-c-pink order-card">
-            <div class="card-block">
-              <h6 class="m-b-20">Fee</h6>
-              <h2 class="text-right">
-                <i class="fas fa-rupee-sign f-left"></i>
-              </h2>
-              <p>
-                <span style="font-size: 20px;">{{ "fee" }}</span>
-              </p>
-            </div>
-          </div>
-        </div>
+    <div class="row text-center">
+        <!--Grid column-->
+      <div class="col-xl-4  hover14 ">
+        <figure>
+          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
+          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances abdos</figcaption>
+        </figure>
       </div>
-    </div>
-  
-    <br />
-    <br />  
-    <br />
+      <!--Grid column-->
+
+      
+      <!--Grid column-->
+      <div class="col-xl-4 ">
+        <!-- <div class="session-type-image rounded-circle">
+          <h2 class="my-5 h2">With shadow</h2>
+        </div>-->
+        <figure>
+          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/jambes.jpg" alt="An awesome picture" />
+          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances jambes</figcaption>
+        </figure>
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-xl-4 ">
+        <!-- <div class="session-type-image rounded-circle">
+          <h2 class="my-5 h2">With shadow</h2>
+        </div>-->
+        <figure>
+          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
+          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances bras</figcaption>
+        </figure>
+      </div>
+      <!--Grid column-->
+
+            <!--Grid column-->
+      <div class="col-xl-4 ">
+        <!-- <div class="session-type-image rounded-circle">
+          <h2 class="my-5 h2">With shadow</h2>
+        </div>-->
+        <figure>
+          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
+          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances bras</figcaption>
+        </figure>
+      </div>
+      <!--Grid column-->
+
+            <!--Grid column-->
+      <div class="col-xl-4 ">
+        <!-- <div class="session-type-image rounded-circle">
+          <h2 class="my-5 h2">With shadow</h2>
+        </div>-->
+        <figure>
+          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
+          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances bras</figcaption>
+        </figure>
+      </div>
+      <!--Grid column-->
+
+            <!--Grid column-->
+      <div class="col-xl-4 ">
+        <!-- <div class="session-type-image rounded-circle">
+          <h2 class="my-5 h2">With shadow</h2>
+        </div>-->
+        <figure>
+          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
+          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances bras</figcaption>
+        </figure>
+      </div>
+      <!--Grid column-->
+    </div>      
   </div>
 </template>
   
@@ -109,7 +122,7 @@
 import UsersDataService from '@/services/UsersDataService';
 
 export default {
-  name: 'CoachHomePage',
+  name: 'CoachSessionTypePage',
   components: {},
   props: [],
   data() {
@@ -139,11 +152,22 @@ export default {
 
 
 
-
-
- <style scoped>
+<style scoped>
 
  /* Shine */
+.rounded-circle:hover  {
+ opacity: 0.6;
+}
+.session-type-image {
+  background: url("../../../public/abdo.jpg") no-repeat;
+}
+.rounded-circle {
+  box-shadow: 0 0 0 10px #0b87a6 ;
+}
+a:link {
+  text-decoration: none;
+}
+
 .order-card {
   color: #fff;
 }
@@ -318,7 +342,8 @@ label #sidebar_btn:hover {
 
 .content {
   margin-left: 250px;
-  background: url("../../../public/3.png") no-repeat;
+  /* background: url("../../../public/font7.jpg") no-repeat; */
+  background-color: #101523;
   background-position: center;
   background-size: cover;
   height: 100vh;
