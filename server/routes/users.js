@@ -46,9 +46,12 @@ module.exports.initUserRoutes = (passport) => {
     );    
     
 
+    router.get('/users/getSessionsTypes' , userController.getSessionsTypes);
+
+
     /** Calls for Coach */  
     /** Get call */  
-    router.get('/users/coach/seances' , userController.getCoachSessionList);
+    router.get('/users/coach/seances/:session_type' , userController.getCoachSessionList);
 
     /** Post call */  
     router.post('/users/coach/seances/addSession',    userController.addCoachSession)

@@ -18,9 +18,13 @@ class UsersDataService {
     return http.get('/users/logout');
   }
 
+  getSessionTypes(){
+    return http.get('/users/getSessionsTypes');
+  }
+
   // Cette partie concerne le Coach
-  getCoachSessionList(){
-    return http.get('/users/coach/seances');
+  getCoachSessionList(session_type){
+    return http.get('/users/coach/seances/'+session_type);
   }
 
   deleteCoachSessionId(deletedSessionId){

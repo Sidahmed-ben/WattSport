@@ -248,7 +248,7 @@ export function
 export default {
   name: "TableCmp",
   components: { DateTimeCmp, ListUsersByLesson },
-  props: [],
+  props: ['session_type'],
   data() {
     return {
       v$: useVuelidate(),
@@ -291,7 +291,7 @@ export default {
     }
   },
   mounted() {
-    UsersDataService.getCoachSessionList()
+    UsersDataService.getCoachSessionList(this.session_type)
       .then((result) => {
         console.log(" Coach lessons Fetched Successfuly ")
         console.log(result.data);

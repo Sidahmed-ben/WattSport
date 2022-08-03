@@ -31,7 +31,7 @@
     <router-link to="/coach/profil" class="nav-link">
       <span>Profil</span>
     </router-link>
-    <router-link to="/coach/seances" class="nav-link">
+    <router-link to="/coach/seances_types" class="nav-link">
       <span>Séances</span>
     </router-link>
     <router-link to="" class="nav-link"><span>Vidéo</span></router-link>

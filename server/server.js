@@ -32,7 +32,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 
-
 app.use(
   session({
     // Key we want to keep secret which will encrypt all of our information

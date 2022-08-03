@@ -44,7 +44,7 @@
     <br />
     <br />
     <br />
-    <TableSeanceCoachCmp @clicked="onClickChild"></TableSeanceCoachCmp>
+    <TableSeanceCoachCmp :session_type= "type"  @clicked="onClickChild"></TableSeanceCoachCmp>
     <br />
     <br />
     <br />
@@ -70,7 +70,7 @@ export default {
       deleteEmployeeModal : false
     }
   },
-  mounted(){
+  mounted () {
     console.log(" MOUNTED 3EMI WITH TYPE = ",this.type);
   },
   methods: {

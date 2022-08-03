@@ -19,10 +19,10 @@
       <h4>{{ "Coach name" }}</h4>
     </center>
 
-    <router-link to class="nav-link">
+    <router-link to="/coach/profil" class="nav-link">
       <span>Profil</span>
     </router-link>
-    <router-link to="/coach/seances" class="nav-link">
+    <router-link to="" class="nav-link">
       <span>Séances</span>
     </router-link>
     <router-link to="/coach/video" class="nav-link">
@@ -33,86 +33,22 @@
 
   <!--content start-->
   <div class="content">
-    <!-- <br />
     <br />
     <br />
     <br />
     <br />
-
     <br />
-    <br />
-    <br /> -->
 
     <div class="row text-center">
         <!--Grid column-->
-      <div class="col-xl-4  hover14 ">
-        <figure>
-          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
-          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances abdos</figcaption>
-        </figure>
-      </div>
+       <div v-for="(type,index) in listTypes" class="col-xl-4  hover14 " :key="index">
+          <figure>
+            <img @click="getSessions(type.id)" style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
+            <figcaption style ="color: #0b87a6;" class="my-5 h3" >{{type.name}}</figcaption>
+          </figure>
+       </div>    
       <!--Grid column-->
 
-      
-      <!--Grid column-->
-      <div class="col-xl-4 ">
-        <!-- <div class="session-type-image rounded-circle">
-          <h2 class="my-5 h2">With shadow</h2>
-        </div>-->
-        <figure>
-          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/jambes.jpg" alt="An awesome picture" />
-          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances jambes</figcaption>
-        </figure>
-      </div>
-      <!--Grid column-->
-
-      <!--Grid column-->
-      <div class="col-xl-4 ">
-        <!-- <div class="session-type-image rounded-circle">
-          <h2 class="my-5 h2">With shadow</h2>
-        </div>-->
-        <figure>
-          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
-          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances bras</figcaption>
-        </figure>
-      </div>
-      <!--Grid column-->
-
-            <!--Grid column-->
-      <div class="col-xl-4 ">
-        <!-- <div class="session-type-image rounded-circle">
-          <h2 class="my-5 h2">With shadow</h2>
-        </div>-->
-        <figure>
-          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
-          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances bras</figcaption>
-        </figure>
-      </div>
-      <!--Grid column-->
-
-            <!--Grid column-->
-      <div class="col-xl-4 ">
-        <!-- <div class="session-type-image rounded-circle">
-          <h2 class="my-5 h2">With shadow</h2>
-        </div>-->
-        <figure>
-          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
-          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances bras</figcaption>
-        </figure>
-      </div>
-      <!--Grid column-->
-
-            <!--Grid column-->
-      <div class="col-xl-4 ">
-        <!-- <div class="session-type-image rounded-circle">
-          <h2 class="my-5 h2">With shadow</h2>
-        </div>-->
-        <figure>
-          <img style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
-          <figcaption style ="color: #0b87a6;" class="my-5 h3" >Séances bras</figcaption>
-        </figure>
-      </div>
-      <!--Grid column-->
     </div>      
   </div>
 </template>
@@ -127,8 +63,21 @@ export default {
   props: [],
   data() {
     return {
-
+      listTypes : []
     }
+  },
+  mounted(){
+    UsersDataService.getSessionTypes()
+      .then((result) => {
+        console.log(" GetSessionTypes Succeffull ");
+        console.log(result.data);
+        this.listTypes = result.data; 
+
+      })
+      .catch((e) => {
+        console.log(" ERROR IN GETTING SESSION TYPES ");
+        console.log(e.response.data);
+      });
   },
   methods: {
     userLogout() {
@@ -143,6 +92,10 @@ export default {
           console.log(e.response.data);
           this.servErrors.push({ error: e.response.data });
         });
+    },
+    getSessions(id){
+      console.log(" Type with id => ",id);
+      this.$router.push('/coach/seances_types/'+id);
     }
   }
 }

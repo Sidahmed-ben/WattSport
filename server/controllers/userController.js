@@ -128,13 +128,15 @@ authenticateUser = (req,email, password, done) => {
 
 
 getCoachSessionList = (req ,res ) => {
+  console.log("////////////////////:",req.params)
   /** Get date as varchar to ignore timzone problems */
   pool.query(
-    `SELECT session_date::varchar,title,session_id FROM session ORDER BY session_date ASC`, 
-    [] , 
+    `SELECT session_date::varchar,title,session_id FROM session WHERE session_type_id = $1 ORDER BY session_date ASC `, 
+    [req.params.session_type] , 
     (err,result) => {
         if(err){
             // Error when sending db request
+            console.log(err)
             return res.status(500).send({message : `ERROR IN FETCHING COACH SESSION LIST `})
         }
         const sessionCoachList = result.rows
@@ -342,6 +344,24 @@ invalidateUserSession = (req,res) => {
   )
 }  
 
+getSessionsTypes = (req,res) => {
+  pool.query(
+    `SELECT * FROM session_type`,
+    (err,result)  => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        console.log(err);
+        return res.status(500).send({message : `ERROR ON GETTING SESSION'S TYPES`});
+      }else{
+        const sessionsTypes = result.rows
+        return res.status(200).send(sessionsTypes);
+      }
+    }
+  )
+}
+
+
 
 
 module.exports.invalidateUserSession = invalidateUserSession ;
@@ -355,6 +375,9 @@ module.exports.editCoachSession = editCoachSession;
 module.exports.registerUserInSession = registerUserInSession;
 module.exports.getUserValidSessionList = getUserValidSessionList;
 module.exports.getUsersByLesson = getUsersByLesson;
+module.exports.getSessionsTypes = getSessionsTypes;
+
+
 
 
 

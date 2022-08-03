@@ -9,6 +9,7 @@ import UserHomePage from "../pages/user/UserHomePage";
 import UserSeancesDisponiblesPage from "../pages/user/UserSeancesDisponiblesPage";
 import UserSeancesValidesPage from "../pages/user/UserSeancesValidesPage";
 import UsersDataService from "../services/UsersDataService";
+import NotFoundPage from '../pages/NotFoundPage.vue';
 
 
 const routes =  [
@@ -65,7 +66,10 @@ const routes =  [
     path: "/coach/seances_types/:type",
     name: "CoachSeancesPage",
     component: CoachSeancesPage,
-    props: true
+    props: true,
+    meta: {
+      urlCheck: true
+    }
   },
 
   // User  
@@ -87,6 +91,10 @@ const routes =  [
     name: "UserSeancesPage",
     component: UserSeancesValidesPage,
     props: true
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    component: NotFoundPage
   }
 ];
 
@@ -118,7 +126,38 @@ router.beforeEach(async (to,from,next) => {
         // router.push({ path: '/user' });
         return next({ path: '/login' })
       })
-  }else{
+
+      
+  // Vérify the id of the sessionType in the url. 
+  }else if ( to.meta.urlCheck ){
+    console.log(to.params.type)
+    let urlTypeSessionParam = to.params.type; 
+    await UsersDataService.getSessionTypes()
+      .then((result) => {
+        console.log(" GetSessionTypes Succeffull ");
+        console.log(result.data);
+        let listTypes = result.data; 
+        let list_types_id = []
+        for(let ind in listTypes) {
+          list_types_id.push(listTypes[ind].id);
+        }
+        console.log(list_types_id);
+        console.log(typeof(urlTypeSessionParam))
+        console.log(listTypes.includes(urlTypeSessionParam))
+        if(list_types_id.includes(urlTypeSessionParam)){
+          return  next();
+        }else{
+          return next({ path: '/error' })
+        }
+      })
+      .catch((e) => {
+        // console.log(" ERROR IN GETTING SESSION TYPES ");
+        console.log(e);
+        return next({ path: '/error' })
+
+      });
+  }
+  else {
     return next();
   }
  
