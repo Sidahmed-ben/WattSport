@@ -92,8 +92,8 @@
           <div class="modal-body">
             <div v-for="(column,index) in columns" class="form-group" :key="index">
               <div v-if="column.type !== null && column.type !== 'TimePicker'">
-                <label>{{ column.column }}</label>
-                <input
+                <!-- <label>{{ column.column }}</label> -->
+                <!-- <input
                   type="{{column.type}}"
                   class="form-control"
                   v-model="addedRowContent.titre"
@@ -101,7 +101,7 @@
                 />
                 <div class="input-errors" v-if="v$.addedRowContent.$errors.length > 0" :key="index">
                   <div class="error-msg">{{ v$.addedRowContent.$errors[0].$message }}</div>
-                </div>
+                </div> -->
               </div>
               <div v-if="column.type === 'TimePicker'">
                 <label>{{ column.column }}</label>
@@ -145,8 +145,8 @@
           <div class="modal-body">
             <div v-for="(column,index) in columns" class="form-group" :key="index">
               <div v-if="column.type !== null && column.type !== 'TimePicker'">
-                <label>{{ column.column }}</label>
-                <input
+                <!-- <label>{{ column.column }}</label> -->
+                <!-- <input
                   type="{{column.type}}"
                   class="form-control"
                   v-model="selectedRowContent.titre"
@@ -158,7 +158,7 @@
                   :key="index"
                 >
                   <div class="error-msg">{{ v$.selectedRowContent.$errors[0].$message }}</div>
-                </div>
+                </div> -->
               </div>
               <div v-if="column.type === 'TimePicker'">
                 <label>{{ column.column }}</label>
@@ -217,7 +217,7 @@
   <!-- List des utilisateurs pour chaque séance -->
   <div id="ListUsersModal" v-if="listUsers">
     <ListUsersByLesson  :selectedSession="items[selectedRow].columns" @hideListEvent="hideListEvent" ></ListUsersByLesson>
-  </div>
+  </div> 
 
 
 </template>
@@ -263,34 +263,47 @@ export default {
       deleteEmployeeModal: false,
       selectedRow: null,
       selectedRowContent: {id:null, titre: null, date: null, heure: null },
-      addedRowContent: { titre: null },
+      // addedRowContent: { titre: null },
       defaultTime: null,
-      editedDate: null
+      editedDate: null,
+      sessionTitle: null
     };
   },
-  validations() {
-    return {
-      addedRowContent: {
-        titre: {
-          titre_validation: {
-            $validator: validTitre,
-            $message: 'Titre Invalid'
-          }
-        }
-      },
+  // validations() {
+  //   return {
+  //     addedRowContent: {
+  //       titre: {
+  //         titre_validation: {
+  //           $validator: validTitre,
+  //           $message: 'Titre Invalid'
+  //         }
+  //       }
+  //     },
 
-      selectedRowContent: {
-        titre: {
-          titre_validation: {
-            $validator: validTitre,
-            $message: 'Titre Invalid'
-          }
-        }
-      }
+  //     selectedRowContent: {
+  //       titre: {
+  //         titre_validation: {
+  //           $validator: validTitre,
+  //           $message: 'Titre Invalid'
+  //         }
+  //       }
+  //     }
       
-    }
-  },
-  mounted() {
+  //   }
+  // },
+  async mounted() {
+    await UsersDataService.getCoachSessionTitle(this.session_type)
+      .then((result) => {
+        console.log(" Coach lessons get Title succesffully")
+        console.log(result.data[0].name);
+        this.sessionTitle = result.data[0].name;
+
+      })
+      .catch((e) =>{
+        console.log(" Error in coach lessons Title Fetching ")
+        console.log(e)
+      });
+
     UsersDataService.getCoachSessionList(this.session_type)
       .then((result) => {
         console.log(" Coach lessons Fetched Successfuly ")
@@ -300,7 +313,6 @@ export default {
         // Session Data 
         let formatedDate;
         let formatedTime;
-        let sessionTitle;
         let sessionId;
         // Itérate the array that contains session data
         result.data.forEach(session => {
@@ -312,19 +324,16 @@ export default {
           // Session time
           formatedTime = this.extractTimeFromQuery(sessionDate);
           console.log("formatedTime " ,formatedTime);
-          // Session title
-          sessionTitle = session.title;
-          console.log(sessionTitle);
           // Session id
           sessionId = session.session_id;
           console.log(sessionId);
-          item = { columns: {id:sessionId,title:sessionTitle,date:formatedDate,time:formatedTime}};
+          item = { columns: {id:sessionId,title:this.sessionTitle,date:formatedDate,time:formatedTime}};
           this.items.push(item);
 
         });
       })
       .catch((e) =>{
-        console.log(" Erro in coach lessons Fetching ")
+        console.log(" Error in coach lessons Fetching ")
         console.log(e)
       });
 
@@ -337,30 +346,30 @@ export default {
     editEmployeeModalFunc(index) {
       this.sessionAlreadyExistsError = false;
       this.selectedRow = index;
-      let selectedRowContentArray = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+      // let selectedRowContentArray = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
 
-      this.selectedRowContent.id     = selectedRowContentArray.id;
-      this.selectedRowContent.titre  = selectedRowContentArray.title;
-      this.selectedRowContent.date   = selectedRowContentArray.date;
-      this.selectedRowContent.heure  = selectedRowContentArray.time;
-      // Set the default date in the edited frame and send it as prop
-      // Concatenate the date and the time 
-      // Delete additional spaces
-      this.defaultTime = this.without_spaces(this.selectedRowContent.date + 'T' + this.selectedRowContent.heure);
+      // this.selectedRowContent.id     = selectedRowContentArray.id;
+      // this.selectedRowContent.titre  = selectedRowContentArray.title;
+      // this.selectedRowContent.date   = selectedRowContentArray.date;
+      // this.selectedRowContent.heure  = selectedRowContentArray.time;
+      // // Set the default date in the edited frame and send it as prop
+      // // Concatenate the date and the time 
+      // // Delete additional spaces
+      // this.defaultTime = this.without_spaces(this.selectedRowContent.date + 'T' + this.selectedRowContent.heure);
       this.editEmployeeModal = true;
     },
     editEmployeeModalFuncSave() {
-      let avantModification = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
-      let apresModification = JSON.parse(JSON.stringify(this.selectedRowContent));
-      console.log("Nomalize", (apresModification))
+      // let avantModification = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+      // let apresModification = JSON.parse(JSON.stringify(this.selectedRowContent));
+      // console.log("Nomalize", (apresModification))
 
-      this.v$.$validate();
-      console.log("Input error : ", this.v$.selectedRowContent.$error);
-      console.log(" : ", this.v$.selectedRowContent.$error);
+      // this.v$.$validate();
+      // console.log("Input error : ", this.v$.selectedRowContent.$error);
+      // console.log(" : ", this.v$.selectedRowContent.$error);
 
-      if (this.v$.selectedRowContent.$error) {
-        return
-      }
+      // if (this.v$.selectedRowContent.$error) {
+      //   return
+      // }
       // Update date 
       let update = false;
       const {modifiedDate,NewDate,NewTime} = this.saveNewDate();
@@ -371,26 +380,26 @@ export default {
 
       // // Update texts
       // For this array we have only Title that can be modifies as text
-      console.log("//////////////////////////////////////////");
-      for (let i = 1; i < Object.values(avantModification).length; i++) {
-        console.log(this.normalize_spaces(Object.values(avantModification)[i]));
-        console.log(this.normalize_spaces(Object.values(apresModification)[i]));
-        if (this.normalize_spaces(Object.values(avantModification)[i]) !== this.normalize_spaces(Object.values(apresModification)[i])) {
-          console.log(" je suis dans la modification du text ");
-          // console.log(this.normalize_spaces(Object.values(avantModification)[i]));
-          // console.log(this.normalize_spaces(Object.values(apresModification)[i]));
-          update = true;
-          break;
-        }
-      }
-      console.log("//////////////////////////////////////////");
+      // console.log("//////////////////////////////////////////");
+      // for (let i = 1; i < Object.values(avantModification).length; i++) {
+      //   console.log(this.normalize_spaces(Object.values(avantModification)[i]));
+      //   console.log(this.normalize_spaces(Object.values(apresModification)[i]));
+      //   if (this.normalize_spaces(Object.values(avantModification)[i]) !== this.normalize_spaces(Object.values(apresModification)[i])) {
+      //     console.log(" je suis dans la modification du text ");
+      //     // console.log(this.normalize_spaces(Object.values(avantModification)[i]));
+      //     // console.log(this.normalize_spaces(Object.values(apresModification)[i]));
+      //     update = true;
+      //     break;
+      //   }
+      // }
+      // console.log("//////////////////////////////////////////");
       
       console.log(update);
       if(update){
         console.log('////////////////////////////////////////////////////////////////');
         // Update the session in the database.
         let editedSession = { id   : this.items[this.selectedRow].columns.id,
-                              title: apresModification.titre,
+                              title: this.sessionTitle,
                               date : NewDate,
                               time : NewTime
                             };
@@ -415,12 +424,8 @@ export default {
       }else{
         this.editEmployeeModal = false;
       }
-
-
-
-      
-      
     },
+
     
     deleteEmployeeModalFunc() {
       let index = this.selectedRow
@@ -483,9 +488,10 @@ export default {
       // console.log(NewDate);
       let NewTime = zero_hour + this.editedDate.hour + ':' + zero_minute + this.editedDate.minute
       // console.log(NewTime);
-      let NewRow = {title : this.addedRowContent.titre,
+      let NewRow = {title : this.sessionTitle,
                     date  : NewDate,
-                    time  : NewTime};
+                    time  : NewTime,
+                    session_type : this.session_type};
       // this.addedRowContent.push(NewDate);
       // this.addedRowContent.push(NewTime);
       console.log(NewRow);
@@ -497,20 +503,20 @@ export default {
       ////////////////////////////////////////// 
 
       // Initialize the input message error
-      this.v$.$validate();
-      console.log("Input error : ", this.v$.addedRowContent.$error);
-      console.log(" : ", this.v$.addedRowContent.$error);
+      // this.v$.$validate();
+      // console.log("Input error : ", this.v$.addedRowContent.$error);
+      // console.log(" : ", this.v$.addedRowContent.$error);
 
-      if (this.v$.addedRowContent.$error) {
-        return
-      }
+      // if (this.v$.addedRowContent.$error) {
+      //   return
+      // }
 
       // Send Post request to the serever to add the new session
       UsersDataService.addCoachSession(NewRow)
         .then((result) => {
           console.log(result);
           console.log(" SESSION ADDED SUCCESSFFULY ");
-          this.addedRowContent = [{ title: null }];
+          // this.addedRowContent = [{ title: null }];
           this.enableArea();
           this.addEmployeeModal = false;
           location.reload();

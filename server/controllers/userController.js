@@ -174,9 +174,9 @@ addCoachSession = (req ,res ) => {
   let addedSession = req.body;
   let dateTime = addedSession.date + " " + addedSession.time;
   // console.log("dateTime =",dateTime);
-  console.log(`INSERT INTO session (title, session_date) VALUES('${addedSession.title}','${dateTime}') `)
+  // console.log(`INSERT INTO session (title, session_date) VALUES('${addedSession.title}','${dateTime}') `)
   pool.query(
-    `INSERT INTO session (title, session_date) VALUES('${addedSession.title}','${dateTime}') RETURNING *`,  
+    `INSERT INTO session (title,session_type_id, session_date) VALUES('${addedSession.title}','${addedSession.session_type}','${dateTime}') RETURNING *`,  
     (err,result) => {
       if(err){
         // Error when sending db request
@@ -361,7 +361,26 @@ getSessionsTypes = (req,res) => {
   )
 }
 
+getCoachSessionTitles = (req,res) => {
+  console.log(" Type session Id => ", req.params.session_type);
 
+  pool.query(
+    `SELECT name FROM session_type WHERE id = $1 ;`,
+    [req.params.session_type],
+    (err,result)  => {
+      if(err){
+        // Error when sending db request
+        console.log(err.code);
+        console.log(err);
+        return res.status(500).send({message : `ERROR ON GETTING SESSION'S TITLES`});
+      }else{
+        const sessionsTitle = result.rows
+        console.log(sessionsTitle)
+        return res.status(200).send(sessionsTitle);
+      }
+    }
+  )
+}
 
 
 module.exports.invalidateUserSession = invalidateUserSession ;
@@ -376,6 +395,7 @@ module.exports.registerUserInSession = registerUserInSession;
 module.exports.getUserValidSessionList = getUserValidSessionList;
 module.exports.getUsersByLesson = getUsersByLesson;
 module.exports.getSessionsTypes = getSessionsTypes;
+module.exports.getCoachSessionTitles = getCoachSessionTitles;
 
 
 

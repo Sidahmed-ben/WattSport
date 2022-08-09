@@ -23,6 +23,10 @@ class UsersDataService {
   }
 
   // Cette partie concerne le Coach
+  getCoachSessionTitle(session_type){
+    return http.get('/users/coach/seancesTitle/'+session_type);
+  }
+
   getCoachSessionList(session_type){
     return http.get('/users/coach/seances/'+session_type);
   }
@@ -50,6 +54,7 @@ class UsersDataService {
   inValidateUserSession(user_session_Id){
     return http.post('/users/coach/seances/invalidateUser', user_session_Id);
   }
+
 
 
   

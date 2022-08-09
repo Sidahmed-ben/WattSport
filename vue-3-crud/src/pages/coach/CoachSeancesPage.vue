@@ -44,7 +44,7 @@
     <br />
     <br />
     <br />
-    <TableSeanceCoachCmp :session_type= "type"  @clicked="onClickChild"></TableSeanceCoachCmp>
+    <TableSeanceCoachCmp  :session_type= "type"  @clicked="onClickChild"></TableSeanceCoachCmp>
     <br />
     <br />
     <br />
@@ -59,7 +59,7 @@ import TableSeanceCoachCmp from "../../components/TableSeanceCoachCmp.vue";
 
 export default {
 
-  name: "SeancesPage",
+  name: "CoachSeancesPage",
   components: { TableSeanceCoachCmp },
   props: ['type'],
   data() {
