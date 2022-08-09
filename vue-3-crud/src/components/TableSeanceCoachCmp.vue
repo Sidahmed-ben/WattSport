@@ -346,16 +346,16 @@ export default {
     editEmployeeModalFunc(index) {
       this.sessionAlreadyExistsError = false;
       this.selectedRow = index;
-      // let selectedRowContentArray = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
+      let selectedRowContentArray = JSON.parse(JSON.stringify(this.items[this.selectedRow].columns));
 
       // this.selectedRowContent.id     = selectedRowContentArray.id;
       // this.selectedRowContent.titre  = selectedRowContentArray.title;
-      // this.selectedRowContent.date   = selectedRowContentArray.date;
-      // this.selectedRowContent.heure  = selectedRowContentArray.time;
+      this.selectedRowContent.date   = selectedRowContentArray.date;
+      this.selectedRowContent.heure  = selectedRowContentArray.time;
       // // Set the default date in the edited frame and send it as prop
       // // Concatenate the date and the time 
       // // Delete additional spaces
-      // this.defaultTime = this.without_spaces(this.selectedRowContent.date + 'T' + this.selectedRowContent.heure);
+      this.defaultTime = this.without_spaces(this.selectedRowContent.date + 'T' + this.selectedRowContent.heure);
       this.editEmployeeModal = true;
     },
     editEmployeeModalFuncSave() {
