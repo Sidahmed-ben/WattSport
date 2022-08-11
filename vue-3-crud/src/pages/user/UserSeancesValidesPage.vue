@@ -42,6 +42,9 @@
     <router-link to="" class="nav-link">
       <span>Sèances validèes</span>
     </router-link>
+    <router-link to="/user/video" class="nav-link">
+      <span>Vidéo</span>
+    </router-link>
   </div>
   <!--sidebar end-->
   <!--content start-->
@@ -63,7 +66,7 @@ import UsersDataService from "@/services/UsersDataService";
 import TableSeanceValidUserCmp from "../../components/TableSeanceValidUserCmp.vue";
 
 export default {
-  name: "SeancesPage",
+  name: "userValidSeancesPage",
   components: {TableSeanceValidUserCmp},
   props: [],
   data() {

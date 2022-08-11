@@ -253,7 +253,7 @@ getUserValidSessionList = (req,res) => {
     console.log("AUTHENTICATED")
   }
   pool.query(
-    `SELECT entrain_session.validated, session.session_id, session.title, session.session_date FROM  entrain_session INNER JOIN session ON entrain_session.session_id = session.session_id WHERE entrain_session.entrain_id = $1 ORDER BY session.session_date`,
+    `SELECT entrain_session.validated, session.session_id, session.title, session.session_date::varchar FROM  entrain_session INNER JOIN session ON entrain_session.session_id = session.session_id WHERE entrain_session.entrain_id = $1 ORDER BY session.session_date`,
     [req.user.entrain_id],
     (err,result)  => {
       if(err){

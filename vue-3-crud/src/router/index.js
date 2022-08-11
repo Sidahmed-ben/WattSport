@@ -1,15 +1,17 @@
 import { createWebHistory, createRouter } from "vue-router";
-import HomePage from "../pages/HomePage";
+import HomePage     from "../pages/HomePage";
 import RegisterPage from "../pages/RegisterPage";
 import CoachHomePage from "../pages/coach/CoachHomePage";
 import CoachVideoPage from "../pages/coach/CoachVideoPage";
 import CoachSeancesPage from "../pages/coach/CoachSeancesPage";
 import CoachSessionTypePage from "../pages/coach/CoachSessionTypePage";
+import UserSessionTypePage from "../pages/user/UserSessionTypePage";
 import UserHomePage from "../pages/user/UserHomePage";
 import UserSeancesDisponiblesPage from "../pages/user/UserSeancesDisponiblesPage";
 import UserSeancesValidesPage from "../pages/user/UserSeancesValidesPage";
 import UsersDataService from "../services/UsersDataService";
 import NotFoundPage from '../pages/NotFoundPage.vue';
+
 
 
 const routes =  [
@@ -80,18 +82,36 @@ const routes =  [
     props: true
 
   },
-  {
-    path: "/user/seances_disponibles",
-    name: "UserSeancesDisponiblesPage",
-    component: UserSeancesDisponiblesPage,
-    props: true
-  },
+  // {
+  //   path: "/user/seances_disponibles",
+  //   name: "UserSeancesDisponiblesPage",
+  //   component: UserSeancesDisponiblesPage,
+  //   props: true
+  // },
   {
     path: "/user/seances_valides",
-    name: "UserSeancesPage",
+    name: "userValidSeancesPage",
     component: UserSeancesValidesPage,
     props: true
   },
+  {
+    path: "/user/seances_disponibles",
+    name: "UserSessionTypePage",
+    component: UserSessionTypePage,
+    props: true
+  },
+
+  {
+    path: "/user/seances_disponibles/:type",
+    name: "UserSeancesPage",
+    component: UserSeancesDisponiblesPage,
+    props: true,
+    meta: {
+      urlCheck: true
+    }
+  },
+
+  // HANDLE URL ERRORS
   {
     path: "/:pathMatch(.*)*",
     component: NotFoundPage

@@ -22,9 +22,9 @@
     </center>
 
     <router-link to="" class="nav-link"><span>Profil</span></router-link>
-    <router-link to="/user/seances_disponibles" class="nav-link"><span>Sèances Disponibles</span></router-link>
+    <router-link to="/user/seances_disponibles" class="nav-link"><span>Sèances disponibles</span></router-link>
     <router-link to="/user/seances_valides" class="nav-link"><span>Sèances validèes</span></router-link>
-    
+    <router-link to="/user/video" class="nav-link"><span>Vidéo</span></router-link>
   </div>
   <!--sidebar end-->
     

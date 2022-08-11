@@ -1,24 +1,9 @@
+
+ 
 <template>
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round"
-  />
-  <link
-    rel="stylesheet"
-    href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-  />
-
-  <link
-    rel="stylesheet"
-    href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-  />
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/icon?family=Material+Icons"
-  />
-
+  <input type="checkbox" id="check" />
   <!--header area start-->
-  <header :class="{ disable: disable }">
+  <header>
     <div class="left_area">
       <h3>Watt Sport</h3>
     </div>
@@ -28,81 +13,95 @@
   </header>
   <!--header area end-->
   <!--sidebar start-->
-  <div class="sidebar" :class="{ disable: disable }">
+  <div class="sidebar">
     <center>
       <img src="../../../public/home.png" class="profile_image" alt />
       <h4>{{ "User name" }}</h4>
     </center>
+
     <router-link to="/user/profil" class="nav-link">
       <span>Profil</span>
     </router-link>
-    <router-link to class="nav-link">
-      <span>Séances disponibles </span>
+    <router-link to="" class="nav-link">
+      <span>Séances disponibles</span>
     </router-link>
     <router-link to="/user/seances_valides" class="nav-link">
-      <span>Sèances validèes</span>
+      <span>Séances validées</span>
     </router-link>
     <router-link to="/user/video" class="nav-link">
       <span>Vidéo</span>
     </router-link>
   </div>
   <!--sidebar end-->
+
   <!--content start-->
-  <div class="content" :class="{ disable: disable }">
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <TableSeanceDispoUserCmp  :session_type= "type" :titreTableau='"List des séances disponibles"'></TableSeanceDispoUserCmp>
-    <br/>
-    <br/>
-    <br/>
+  <div class="content">
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <div class="row text-center">
+        <!--Grid column-->
+       <div v-for="(type,index) in listTypes" class="col-xl-4  hover14 " :key="index">
+          <figure>
+            <img @click="getSessions(type.id)" style="width: 300px;height: 300px;" class="rounded-circle" src="../../../public/abdo.jpg" alt="An awesome picture" />
+            <figcaption style ="color: #0b87a6;" class="my-5 h3" >{{type.name}}</figcaption>
+          </figure>
+       </div>    
+      <!--Grid column-->
+
+    </div>      
   </div>
 </template>
-
-
+  
 
 <script>
-
-import UsersDataService from "@/services/UsersDataService";
-import TableSeanceDispoUserCmp from "../../components/TableSeanceDispoUserCmp.vue";
+import UsersDataService from '@/services/UsersDataService';
 
 export default {
-  name: "UserSeancesPage",
-  components: { TableSeanceDispoUserCmp },
-  props: ['type'],
+  name: 'UserSessionTypePage',
+  components: {},
+  props: [],
   data() {
     return {
-      disable: false,
-      editEmployeeModal: false,
-      addEmployeeModal: false,
-      deleteEmployeeModal: false,
-    };
+      listTypes : []
+    }
   },
   mounted(){
-    console.log(" type => ",this.type)
+    UsersDataService.getSessionTypes()
+      .then((result) => {
+        console.log(" GetSessionTypes Succeffull ");
+        console.log(result.data);
+        this.listTypes = result.data; 
+
+      })
+      .catch((e) => {
+        console.log(" ERROR IN GETTING SESSION TYPES ");
+        console.log(e.response.data);
+      });
   },
   methods: {
     userLogout() {
-      console.log("///////////////////////////");
+      console.log("///////////////////////////")
       UsersDataService.logoutUser()
         .then((result) => {
           console.log(" Users Logout succeffuly");
           console.log(result);
-          this.$router.push("/login");
+          this.$router.push('/login');
         })
-        .catch((e) => {
+        .catch(e => {
           console.log(e.response.data);
           this.servErrors.push({ error: e.response.data });
         });
     },
-    onClickChild(disable) {
-      console.log("onclick");
-      this.disable = disable;
-    },
-  },
-};
+    getSessions(id){
+      console.log(" Type with id => ",id);
+      this.$router.push('/user/seances_disponibles/'+id);
+    }
+  }
+}
 
 </script>
 
@@ -110,7 +109,17 @@ export default {
 
 
 <style scoped>
-/*  Navbar css */
+
+ /* Shine */
+.rounded-circle:hover  {
+ opacity: 0.6;
+}
+.session-type-image {
+  background: url("../../../public/abdo.jpg") no-repeat;
+}
+.rounded-circle {
+  box-shadow: 0 0 0 10px #0b87a6 ;
+}
 a:link {
   text-decoration: none;
 }
@@ -165,6 +174,12 @@ a:link {
   text-decoration: none;
 }
 
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", sans-serif;
+}
+
 header {
   position: fixed;
   background: #22242a;
@@ -198,7 +213,6 @@ header {
   font-weight: 600;
   color: #fff;
   transition: 0.5s;
-  transition-property: background;
   width: 100px;
   border-radius: 20px;
 }
@@ -252,18 +266,81 @@ header {
   padding-right: 10px;
 }
 
+label #sidebar_btn {
+  z-index: 1;
+  color: #fff;
+  position: fixed;
+  cursor: pointer;
+  left: 300px;
+  font-size: 20px;
+  margin: 5px 0;
+  transition: 0.5s;
+  transition-property: color;
+}
+
+label #sidebar_btn:hover {
+  color: #19b3d3;
+}
+
+#check:checked ~ .sidebar {
+  left: -190px;
+}
+
+#check:checked ~ .sidebar a span {
+  display: none;
+}
+
+#check:checked ~ .sidebar a {
+  font-size: 20px;
+  margin-left: 170px;
+  width: 80px;
+}
+
 .content {
   margin-left: 250px;
-  background: url("../../../public/5.jpg") no-repeat;
+  /* background: url("../../../public/font7.jpg") no-repeat; */
+  background-color: #101523;
   background-position: center;
   background-size: cover;
   height: 100vh;
   transition: 0.5s;
-  position: relative;
-}
-/* ---------------------------------------------- */
+  overflow: scroll;
 
-.disable {
-  pointer-events: none;
+}
+
+#check:checked ~ .content {
+  margin-left: 60px;
+}
+
+#check {
+  display: none;
 }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <template>
+    <h3> WELCOME TO WATT SPORT USER HOME </h3>
+</template>
+
+
+<script>
+
+
+</script>
+
+
+<style>
+</style> -->

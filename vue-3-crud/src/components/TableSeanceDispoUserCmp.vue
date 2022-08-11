@@ -66,7 +66,7 @@ import UsersDataService from "../services/UsersDataService";
 export default {
   name: "TableSeanceDispoUserCmp.vue",
   components: {},
-  props: ["titreTableau"],
+  props: ["titreTableau",'session_type'],
   data() {
     return {
       items: [],
@@ -74,10 +74,10 @@ export default {
       itemRefs: []
     };
   },
-  mounted() {
-    
+  async mounted() {
+    console.log(" je suis daans séances user dispo , type_session -> ",this.session_type)
     let listValidSession = [];
-    UsersDataService.getUserValidSessionList()
+    await UsersDataService.getUserValidSessionList()
       .then((result) => {
         // Itérate the array that contains session data
         console.log(" getUserValidSessionList Successfful ");
@@ -93,7 +93,7 @@ export default {
       console.log(listValidSession);
 
 
-    UsersDataService.getCoachSessionList()
+    UsersDataService.getCoachSessionList(this.session_type)
       .then((result) => {
         console.log(" lessons Fetched Successfuly ")
         console.log(result.data);
